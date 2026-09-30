@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --color-primary: #087f5b;
+  --color-primary-dark: #056b4d;
+  --color-navy: #123b46;
+  --color-muted: #49627a;
+  --color-light-green: #eaf7f1;
+  --color-soft-bg: #f8fbfa;
+}
+
+:root {
+  color-scheme: light;
+  --app-background: #f8fbfa;
+  --app-surface: #ffffff;
+  --app-text: #123b46;
+  --app-muted: #49627a;
+  --app-border: #dce5eb;
+  --app-input: #ffffff;
+  --app-nav-active-background: #166534;
+  --app-nav-active-text: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --app-background: #07392b;
+  --app-surface: #0b4737;
+  --app-text: #f1faf6;
+  --app-muted: #b7d8cb;
+  --app-border: #315f52;
+  --app-input: #123d32;
+  --app-surface-subtle: #103f34;
+  --app-nav-active-background: #b7d8cb;
+  --app-nav-active-text: #07392b;
+}
+
+.sidebar-nav-link-active {
+  background-color: var(--app-nav-active-background);
+  color: var(--app-nav-active-text);
+}
+
+:root[data-theme="dark"] [class~="bg-white"] {
+  background-color: var(--app-surface);
+}
+
+:root[data-theme="dark"] [class~="bg-gray-50"] {
+  background-color: var(--app-background);
+}
+
+:root[data-theme="dark"] [class~="bg-gray-100"],
+:root[data-theme="dark"] [class~="bg-gray-200"] {
+  background-color: var(--app-surface-subtle);
+}
+
+:root[data-theme="dark"] [class~="text-gray-900"],
+:root[data-theme="dark"] [class~="text-gray-800"] {
+  color: var(--app-text);
+}
+
+:root[data-theme="dark"] [class~="text-gray-700"],
+:root[data-theme="dark"] [class~="text-gray-600"],
+:root[data-theme="dark"] [class~="text-gray-500"] {
+  color: var(--app-muted);
+}
+
+:root[data-theme="dark"] [class~="border-gray-50"],
+:root[data-theme="dark"] [class~="border-gray-100"],
+:root[data-theme="dark"] [class~="border-gray-200"] {
+  border-color: var(--app-border);
+}
+
+:root[data-theme="dark"] [class~="hover:bg-gray-100"]:hover {
+  background-color: var(--app-surface-subtle);
+}
+
+body {
+  font-family:
+    "Plus Jakarta Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background-color: var(--app-background);
+  color: var(--app-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.auth-page {
+  background-color: var(--app-background);
+}
+
+.auth-frame,
+.auth-content {
+  background-color: var(--app-surface);
+}
+
+.auth-content h2,
+.auth-content label {
+  color: var(--app-text);
+}
+
+.auth-content p {
+  color: var(--app-muted);
+}
+
+.auth-content input:not([type="checkbox"]) {
+  background-color: var(--app-input);
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.auth-content input::placeholder {
+  color: var(--app-muted);
+}
+
+:root[data-theme="dark"] .auth-status {
+  background-color: #123d32;
+  border-color: #315f52;
+  color: #b7d8cb;
+}
