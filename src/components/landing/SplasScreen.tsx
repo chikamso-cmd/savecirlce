@@ -28,20 +28,20 @@ export default function SaveCircleSplash() {
   useEffect(() => {
     // If the user already visited and not previewing, redirect to dashboard
     if (hasVisited && !isPreview) {
-      navigate("/dashboard", { replace: true });
+      navigate("/login", { replace: true });
     }
   }, [hasVisited, isPreview, navigate]);
 
   const handleGetStarted = () => {
     localStorage.setItem("savecircle_has_visited", "true");
     setHasVisited(true);
-    navigate("/dashboard");
+    navigate("/login");
   };
 
   const handleLearnMore = () => {
     localStorage.setItem("savecircle_has_visited", "true");
     setHasVisited(true);
-    navigate("/dashboard");
+    navigate("/login");
   };
 
   // If already visited, render nothing while redirecting
@@ -51,7 +51,9 @@ export default function SaveCircleSplash() {
 
   // Task 1: Show Loading component first
   if (isLoading) {
-    return <LoadingScreen onFinish={() => setIsLoading(false)} durationMs={1800} />;
+    return (
+      <LoadingScreen onFinish={() => setIsLoading(false)} durationMs={1800} />
+    );
   }
 
   // Task 2: Show Pixel-Perfect Splash Screen
@@ -255,4 +257,3 @@ export default function SaveCircleSplash() {
     </div>
   );
 }
-
