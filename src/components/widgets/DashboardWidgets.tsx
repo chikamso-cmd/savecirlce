@@ -125,7 +125,7 @@ export function CollectionsChart() {
       }
     >
       <div className="overflow-x-auto">
-        <div className="min-w-[420px]">
+        <div className="min-w-[120px]">
           <ul className="flex h-48 items-end gap-1.5 border-b border-slate-200 sm:gap-2.5">
             {collections.map((d) => (
               <li

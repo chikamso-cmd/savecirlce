@@ -54,6 +54,17 @@ export interface Payment {
   allocations: Allocation[];
   receiptSentAt?: string;
   audit: AuditEntry[];
+  fromUnmatched?: boolean; // entered the Unmatched queue (v4 §5.3)
+  resolvedAt?: string;
+  refundTo?: { bank: string; accountNumber: string; accountName: string };
+}
+
+export interface DirectoryMember {
+  name: string;
+  phone: string;
+  groups: string[];
+  accountNumber?: string;
+  verified: boolean;
 }
 
 const today = (h: number, m: number) => {
@@ -132,6 +143,7 @@ let PAYMENTS: Payment[] = [
     amount: 20000,
     channel: "transfer",
     status: "unmatched",
+    fromUnmatched: true,
     accountNumber: "9000000001",
     accountOwner: "organisation",
     senderName: "[SENDER NAME]",
@@ -203,6 +215,7 @@ let PAYMENTS: Payment[] = [
     amount: 15000,
     channel: "transfer",
     status: "unmatched",
+    fromUnmatched: true,
     accountNumber: "9012345676",
     accountOwner: "member",
     senderName: "[SENDER NAME]",
@@ -266,13 +279,168 @@ let PAYMENTS: Payment[] = [
   },
 ];
 
-export const MEMBERS = [
-  "[Member 1]",
-  "[Member 2]",
-  "[Member 4]",
-  "[Member 5]",
-  "[Member 7]",
-  "[Member 9]",
+PAYMENTS = [
+  ...PAYMENTS,
+  {
+    id: "p9",
+    receivedAt: daysAgo(1, 16),
+    amount: 10000,
+    channel: "transfer",
+    status: "unmatched",
+    fromUnmatched: true,
+    accountNumber: "9000000001",
+    accountOwner: "organisation",
+    senderName: "[BELLO TOLA A]",
+    narration: "thrift oct",
+    providerRef: "PSK_2d81aa04",
+    allocations: [],
+    audit: [
+      { at: daysAgo(1, 16), text: "Webhook received, signature checked" },
+      { at: daysAgo(1, 16), text: "Re-verified with provider" },
+      {
+        at: daysAgo(1, 16),
+        text: "Paid into the organisation account, added to the Unmatched queue",
+      },
+    ],
+  },
+  {
+    id: "p10",
+    receivedAt: daysAgo(5, 9),
+    amount: 2500,
+    channel: "transfer",
+    status: "unmatched",
+    fromUnmatched: true,
+    accountNumber: "9000000001",
+    accountOwner: "organisation",
+    senderName: "[OKAFOR NGOZI]",
+    narration: "levy",
+    providerRef: "PSK_9a0c73be",
+    allocations: [],
+    audit: [
+      { at: daysAgo(5, 9), text: "Webhook received, signature checked" },
+      {
+        at: daysAgo(5, 9),
+        text: "Paid into the organisation account, added to the Unmatched queue",
+      },
+      {
+        at: daysAgo(2, 9),
+        text: "Older than 3 days, escalated to the branch manager",
+      },
+    ],
+  },
+  {
+    id: "p11",
+    receivedAt: daysAgo(3, 11),
+    amount: 5000,
+    channel: "transfer",
+    status: "matched",
+    fromUnmatched: true,
+    resolvedAt: daysAgo(2, 15),
+    member: "[Ade Musa]",
+    accountNumber: "9000000001",
+    accountOwner: "organisation",
+    senderName: "[MUSA ADEWALE]",
+    narration: "ajo",
+    providerRef: "PSK_4be0c118",
+    allocations: [
+      {
+        group: "[Weekly ajo]",
+        cycle: "Cycle 4",
+        kind: "current",
+        amount: 5000,
+      },
+    ],
+    receiptSentAt: daysAgo(2, 15),
+    audit: [
+      {
+        at: daysAgo(3, 11),
+        text: "Paid into the organisation account, added to the Unmatched queue",
+      },
+      {
+        at: daysAgo(2, 15),
+        text: "Assigned to [Ade Musa]: sender name matches, confirmed by phone",
+        by: "[Officer 2]",
+      },
+      { at: daysAgo(2, 15), text: "Receipt sent by WhatsApp" },
+    ],
+  },
+];
+
+// Member directory used for matching. TODO: GET /members?search=
+export const DIRECTORY: DirectoryMember[] = [
+  {
+    name: "[Tola Bello]",
+    phone: "08031112222",
+    groups: ["[Market traders thrift]", "[Weekly ajo]"],
+    accountNumber: "9012345681",
+    verified: true,
+  },
+  {
+    name: "[Ngozi Okafor]",
+    phone: "08052223333",
+    groups: ["[Church thrift]"],
+    verified: false,
+  },
+  {
+    name: "[Ade Musa]",
+    phone: "07063334444",
+    groups: ["[Weekly ajo]"],
+    accountNumber: "9012345683",
+    verified: true,
+  },
+  {
+    name: "[Member 1]",
+    phone: "08031234567",
+    groups: ["[Market traders thrift]"],
+    accountNumber: "9012345671",
+    verified: true,
+  },
+  {
+    name: "[Member 2]",
+    phone: "08059876543",
+    groups: ["[Weekly ajo]"],
+    accountNumber: "9012345672",
+    verified: true,
+  },
+  {
+    name: "[Member 7]",
+    phone: "08022223344",
+    groups: ["[Teachers circle]"],
+    accountNumber: "9012345677",
+    verified: true,
+  },
+];
+
+export const MEMBERS = DIRECTORY.map((m) => m.name);
+
+// TODO: GET /unmatched
+export async function listUnmatched(): Promise<Payment[]> {
+  await wait(400);
+  return clone(PAYMENTS.filter((p) => p.fromUnmatched));
+}
+
+// TODO: GET /banks/resolve?bank=&account= (name enquiry, v4 §2.2)
+export async function resolveAccountName(
+  bank: string,
+  accountNumber: string,
+): Promise<string> {
+  await wait(800);
+  if (!bank || !/^\d{10}$/.test(accountNumber))
+    throw new Error("Pick a bank and enter a 10-digit account number.");
+  if (accountNumber.endsWith("0000"))
+    throw new Error("No account found. Check the number and bank.");
+  return "[ACCOUNT HOLDER NAME]";
+}
+
+export const BANKS = [
+  "Access Bank",
+  "First Bank",
+  "GTBank",
+  "Opay",
+  "Moniepoint",
+  "UBA",
+  "Wema Bank",
+  "Zenith Bank",
 ];
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -312,6 +480,7 @@ export async function assignPayment(
     ...p,
     status: "matched",
     member,
+    resolvedAt: p.fromUnmatched ? stamp() : p.resolvedAt,
     allocations: [{ group, kind: "current", amount: p.amount }],
     receiptSentAt: stamp(),
     audit: [
@@ -323,13 +492,22 @@ export async function assignPayment(
 }
 
 // TODO: POST /payments/:id/refund
-export async function markForRefund(p: Payment, reason: string, by: string) {
+export async function markForRefund(
+  p: Payment,
+  reason: string,
+  by: string,
+  refundTo?: Payment["refundTo"],
+) {
+  const to = refundTo ? ` to ${refundTo.accountName}, ${refundTo.bank}` : "";
   return save({
     ...p,
     status: "refund_pending",
+    refundTo,
+    resolvedAt: stamp(),
     audit: [
       ...p.audit,
-      { at: stamp(), text: `Marked for refund: ${reason}`, by },
+      { at: stamp(), text: `Marked for refund${to}: ${reason}`, by },
+      { at: stamp(), text: "Refund sent for approval" },
     ],
   });
 }
