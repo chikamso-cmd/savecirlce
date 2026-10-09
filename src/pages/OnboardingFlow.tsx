@@ -12,7 +12,7 @@ import {
   type KybStatus,
   type OrgDetails,
   type StepStatus,
-} from "../types/types"
+} from "../types/types";
 
 type Screen = "org" | "kyb" | "pending" | "rails";
 
@@ -144,15 +144,15 @@ export default function OnboardingFlow({
     screen === "org"
       ? ["current", "upcoming", "upcoming", "upcoming"]
       : screen === "kyb"
-      ? ["done", "current", "upcoming", "upcoming"]
-      : screen === "pending"
-        ? ["done", "review", "upcoming", "upcoming"]
-        : [
-            "done",
-            kybStatus === "approved" ? "done" : "review",
-            "current",
-            "upcoming",
-          ];
+        ? ["done", "current", "upcoming", "upcoming"]
+        : screen === "pending"
+          ? ["done", "review", "upcoming", "upcoming"]
+          : [
+              "done",
+              kybStatus === "approved" ? "done" : "review",
+              "current",
+              "upcoming",
+            ];
 
   const notReady = (what: string) => () =>
     setToast(`${what} isn't wired up yet.`);
@@ -164,7 +164,8 @@ export default function OnboardingFlow({
         statuses={statuses}
         onSaveLater={saveLater}
       >
-        {screen === "otionStep
+        {screen === "org" && (
+          <OrganisationStep
             value={org}
             onChange={setOrg}
             onSubmit={async () => {

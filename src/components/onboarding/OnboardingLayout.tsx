@@ -93,7 +93,7 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
 function Logo() {
   return (
     <div className="flex items-center gap-3">
-      <img src="/src/assets/images/SaveCircle_logo.png" alt="sacevircle logo" />
+      <img src="/src/assets/images/logo.png" alt="sacevircle logo" width={230}/>
     </div>
   );
 }

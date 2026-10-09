@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginScreen, SignUpScreen } from "./components/auth/LoginScreen";
 import SaveCircleSplash from "./components/landing/SplasScreen";
 import Dashboard from "./pages/Dashboard";
@@ -20,7 +20,11 @@ import ReconciliationPage from "./pages/Reconciliationpage";
 import SettingsPage from "./pages/Settingspage";
 import TeamPage from "./pages/Teamspage";
 import ReportsPage from "./pages/Reportspage";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+// import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { ToastContainer } from "react-toastify";
+import ResetPasswordPage from "./pages/forgotpassword/Resetpasswordpage";
+import VerifyOtpPage from "./pages/forgotpassword/Verifyotppag";
+import ForgotPasswordPage from "./pages/forgotpassword/Forgotpasswordpage";
 
 export default function App() {
   return (
@@ -29,7 +33,10 @@ export default function App() {
         <Route path="/" element={<SaveCircleSplash />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignUpScreen />} />
-        <Route element={<ProtectedRoute />}>
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/forgot-password/verify" element={<VerifyOtpPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        {/* <Route element={<ProtectedRoute />}> */}
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
@@ -53,8 +60,10 @@ export default function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/team" element={<TeamPage />} />
           </Route>
-        </Route>
+        {/* </Route> */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+      <ToastContainer autoClose={3000} position="top-right" />
     </BrowserRouter>
 
     // <AuthPage />

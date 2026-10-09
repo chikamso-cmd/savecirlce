@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {
   AlertCircle,
@@ -137,6 +137,7 @@ function LoginForm() {
   const [password, setPassword] = useState<string>();
   const [error, setError] = useState<string | null>(null);
   const afterLogin = useAfterLogin();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -149,9 +150,9 @@ function LoginForm() {
         password,
         rememberMe,
       };
-      // saveSession(
-      //    await api.post(``, payload)
-      //   );
+      saveSession(
+         await api.post(``, payload)
+        );
       console.log(payload, "login payload");
       afterLogin();
     } catch (e) {
@@ -225,9 +226,7 @@ function LoginForm() {
         </label>
         <button
           type="button"
-          onClick={() =>
-            window.alert("Password recovery is not connected yet.")
-          }
+          onClick={() => navigate("/forgot-password")}
           className="font-semibold text-[#087f5b] hover:underline"
         >
           Forgot password?
