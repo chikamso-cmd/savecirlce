@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {
   AlertCircle,
@@ -22,10 +22,13 @@ import { useTheme } from "../../contexts/useTheme";
 import {
   sendSignupOtp,
   signInWithGoogle,
+  signInWithPassword,
   verifySignupOtp,
-  type AuthUser,
+  type AuthSession,
 } from "../../services/Api";
 import { preloadGoogle, requestGoogleCode } from "../../services/googleAuth";
+import { api, tokenStore } from "../../services/Axios";
+import { toast } from "react-toastify";
 
 const SESSION_KEY = "savecircle:session";
 
@@ -58,7 +61,8 @@ function ErrorText({ children }: { children: string }) {
   );
 }
 
-function saveSession(user: AuthUser) {
+function saveSession({ user, accessToken }: AuthSession) {
+  tokenStore.set(accessToken);
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
   } catch {
@@ -66,8 +70,21 @@ function saveSession(user: AuthUser) {
   }
 }
 
-function GoogleButton({ mode }: { mode: "login" | "signup" }) {
+// Where to go after signing in: the protected page that bounced them here, else onboarding.
+// Only same-site paths are accepted so ?next= can't redirect off SaveCircle.
+function useAfterLogin() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  return () => {
+    const next = params.get("next") ?? "";
+    const safe = next.startsWith("/") && !next.startsWith("//");
+    // Real version: send users who finished onboarding to /dashboard instead
+    navigate(safe ? next : "/onboarding", { replace: true });
+  };
+}
+
+function GoogleButton({ mode }: { mode: "login" | "signup" }) {
+  const afterLogin = useAfterLogin();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,10 +95,8 @@ function GoogleButton({ mode }: { mode: "login" | "signup" }) {
     setError(null);
     try {
       const code = await requestGoogleCode();
-      const { user } = await signInWithGoogle(code, mode);
-      saveSession(user);
-      // Real version: send users who finished onboarding to /dashboard instead
-      navigate("/onboarding");
+      saveSession(await signInWithGoogle(code, mode));
+      afterLogin();
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -117,11 +132,33 @@ function GoogleButton({ mode }: { mode: "login" | "signup" }) {
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [error, setError] = useState<string | null>(null);
+  const afterLogin = useAfterLogin();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate("/onboarding");
+    // const form = new FormData(event.currentTarget);
+    setBusy(true);
+    setError(null);
+    try {
+      const payload = {
+        email,
+        password,
+        rememberMe,
+      };
+      // saveSession(
+      //    await api.post(``, payload)
+      //   );
+      console.log(payload, "login payload");
+      afterLogin();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -136,6 +173,8 @@ function LoginForm() {
             id="email"
             name="email"
             type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             autoComplete="username"
             required
             placeholder="Enter your email or phone number"
@@ -153,6 +192,8 @@ function LoginForm() {
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
             required
             placeholder="Enter your password"
@@ -184,14 +225,23 @@ function LoginForm() {
         </label>
         <button
           type="button"
-          onClick={() => window.alert("Password recovery is not connected yet.")}
+          onClick={() =>
+            window.alert("Password recovery is not connected yet.")
+          }
           className="font-semibold text-[#087f5b] hover:underline"
         >
           Forgot password?
         </button>
       </div>
-      <button type="submit" className={primaryBtn}>
-        Log In <ArrowRight className="size-4" />
+      {error && <ErrorText>{error}</ErrorText>}
+      <button type="submit" disabled={busy} className={primaryBtn}>
+        {busy ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : (
+          <>
+            Log In <ArrowRight className="size-4" />
+          </>
+        )}
       </button>
       <GoogleButton mode="login" />
     </form>
@@ -206,9 +256,9 @@ function SignUpForm({
   stage: "details" | "otp";
   onStageChange: (s: "details" | "otp") => void;
 }) {
-  const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
-  const [phoneInput, setPhoneInput] = useState("");
+  const afterLogin = useAfterLogin();
+  const [full_Name, setFull_Name] = useState<string>("");
+  const [phoneInput, setPhoneInput] = useState<string>("");
   const [agreed, setAgreed] = useState(false);
   const [attempted, setAttempted] = useState(false);
   const [phone, setPhone] = useState<string | null>(null);
@@ -224,7 +274,7 @@ function SignUpForm({
   }, [resendIn]);
 
   const errors = {
-    name: fullName.trim().length < 3 ? "Enter your full name." : null,
+    name: full_Name.trim().length < 3 ? "Enter your full name." : null,
     phone: normalizeNgPhone(phoneInput)
       ? null
       : "Enter a valid Nigerian phone number, e.g. 0803 123 4567.",
@@ -235,10 +285,11 @@ function SignUpForm({
     setBusy(true);
     setError(null);
     try {
-      const res = await sendSignupOtp(to);
+      const res = await api.post(``);
+      console.log(res);
       setPhone(to);
       setCode("");
-      setResendIn(res.resendInSeconds);
+      setResendIn(60);
       onStageChange("otp");
     } catch (e) {
       setError((e as Error).message);
@@ -247,12 +298,26 @@ function SignUpForm({
     }
   };
 
-  const handleDetails = (event: FormEvent<HTMLFormElement>) => {
+  const handleDetails = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAttempted(true);
     const normalized = normalizeNgPhone(phoneInput);
     if (errors.name || errors.terms || !normalized) return;
-    sendCode(normalized);
+    // signup logic
+    try {
+      const payload = {
+        full_Name,
+        phoneInput,
+      };
+      const res = await api.post(``, payload);
+      sessionStorage.setItem("data", JSON.stringify({ full_Name, phoneInput }));
+      console.log(payload, "signup response");
+      sendCode(normalized);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setAttempted(false);
+    }
   };
 
   const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
@@ -261,8 +326,14 @@ function SignUpForm({
     setBusy(true);
     setError(null);
     try {
-      saveSession(await verifySignupOtp(phone, code, fullName.trim()));
-      navigate("/onboarding");
+      const payload = {
+        phoneInput,
+        full_Name,
+        code,
+      };
+      await api.post(``, payload);
+      console.log;
+      afterLogin();
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -354,8 +425,8 @@ function SignUpForm({
             id="full-name"
             name="name"
             autoComplete="name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            value={full_Name}
+            onChange={(e) => setFull_Name(e.target.value)}
             placeholder="Enter your full name"
             className={fieldClass}
           />
@@ -443,9 +514,7 @@ interface AuthFormProps {
 const AuthForm = ({ mode }: AuthFormProps) => {
   const isSignup = mode === "signup";
   const { isDarkMode, toggleTheme } = useTheme();
-  const [signupStage, setSignupStage] = useState<"details" | "otp">(
-    "details",
-  );
+  const [signupStage, setSignupStage] = useState<"details" | "otp">("details");
   const onOtp = isSignup && signupStage === "otp";
 
   return (

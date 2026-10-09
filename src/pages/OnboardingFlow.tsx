@@ -164,8 +164,7 @@ export default function OnboardingFlow({
         statuses={statuses}
         onSaveLater={saveLater}
       >
-        {screen === "org" && (
-          <OrganisationStep
+        {screen === "otionStep
             value={org}
             onChange={setOrg}
             onSubmit={async () => {

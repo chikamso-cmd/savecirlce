@@ -20,6 +20,7 @@ import ReconciliationPage from "./pages/Reconciliationpage";
 import SettingsPage from "./pages/Settingspage";
 import TeamPage from "./pages/Teamspage";
 import ReportsPage from "./pages/Reportspage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 export default function App() {
   return (
@@ -28,25 +29,30 @@ export default function App() {
         <Route path="/" element={<SaveCircleSplash />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignUpScreen />} />
-        <Route path="/onboarding" element={<OnboardingFlow />} />
-        <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/groups" element={<GroupsPage />} />
-          <Route path="/groups/new" element={<CreateGroupPage />} />
-          <Route path="/groups/:id" element={<GroupDetailsPage />} />
-          <Route path="/members" element={<MembersPage />} />
-          <Route path="/payments" element={<PaymentsPage />} />
-          <Route path="/payments/:id" element={<PaymentDetailsPage />} />
-          <Route path="/unmatched" element={<UnmatchedPage />} />
-          <Route path="/unmatched/:id" element={<UnmatchedDetailsPage />} />
-          <Route path="/withdrawals" element={<WithdrawalsPage />} />
-          <Route path="/withdrawals/:id" element={<WithdrawalDetailsPage />} />
-          <Route path="/cash" element={<CashPage />} />
-          <Route path="/cash/:id" element={<CashDetailsPage />} />
-          <Route path="/reconciliation" element={<ReconciliationPage />} />
-          <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/team" element={<TeamPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/onboarding" element={<OnboardingFlow />} />
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/groups" element={<GroupsPage />} />
+            <Route path="/groups/new" element={<CreateGroupPage />} />
+            <Route path="/groups/:id" element={<GroupDetailsPage />} />
+            <Route path="/members" element={<MembersPage />} />
+            <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/payments/:id" element={<PaymentDetailsPage />} />
+            <Route path="/unmatched" element={<UnmatchedPage />} />
+            <Route path="/unmatched/:id" element={<UnmatchedDetailsPage />} />
+            <Route path="/withdrawals" element={<WithdrawalsPage />} />
+            <Route
+              path="/withdrawals/:id"
+              element={<WithdrawalDetailsPage />}
+            />
+            <Route path="/cash" element={<CashPage />} />
+            <Route path="/cash/:id" element={<CashDetailsPage />} />
+            <Route path="/reconciliation" element={<ReconciliationPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/team" element={<TeamPage />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

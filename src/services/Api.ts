@@ -12,19 +12,6 @@ export async function sendSignupOtp(
   return { resendInSeconds: 60 };
 }
 
-export async function verifySignupOtp(
-  phone: string,
-  code: string,
-  fullName: string,
-): Promise<{ userId: string; phone: string; fullName: string }> {
-  // Real version: POST /auth/otp/verify; returns a session for the new user
-  await wait(900);
-  if (!/^\d{6}$/.test(code)) throw new Error("Enter the 6-digit code.");
-  if (code === "000000")
-    throw new Error("That code is wrong or has expired. Try again or resend.");
-  return { userId: crypto.randomUUID(), phone, fullName };
-}
-
 export interface AuthUser {
   userId: string;
   fullName: string;
@@ -32,10 +19,53 @@ export interface AuthUser {
   phone?: string;
 }
 
+// What every sign-in returns; the real API issues the access token (refresh token goes in a cookie)
+export interface AuthSession {
+  user: AuthUser;
+  accessToken: string;
+}
+
+const mockToken = () => `mock.${crypto.randomUUID()}`;
+
+export async function verifySignupOtp(
+  phone: string,
+  code: string,
+  fullName: string,
+): Promise<AuthSession> {
+  // Real version: POST /auth/otp/verify; returns a session for the new user
+  await wait(900);
+  if (!/^\d{6}$/.test(code)) throw new Error("Enter the 6-digit code.");
+  if (code === "000000")
+    throw new Error("That code is wrong or has expired. Try again or resend.");
+  return {
+    user: { userId: crypto.randomUUID(), phone, fullName },
+    accessToken: mockToken(),
+  };
+}
+
+export async function signInWithPassword(
+  identifier: string,
+  password: string,
+): Promise<AuthSession> {
+  // Real version: POST /auth/login { identifier, password }
+  await wait(900);
+  if (!identifier.trim() || !password)
+    throw new Error("Enter your email or phone number and password.");
+  return {
+    user: {
+      userId: crypto.randomUUID(),
+      fullName: "SaveCircle Admin",
+      email: identifier.includes("@") ? identifier : undefined,
+      phone: identifier.includes("@") ? undefined : identifier,
+    },
+    accessToken: mockToken(),
+  };
+}
+
 export async function signInWithGoogle(
   _code: string,
   mode: "login" | "signup",
-): Promise<{ user: AuthUser; isNewUser: boolean }> {
+): Promise<AuthSession & { isNewUser: boolean }> {
   // Real version: POST /auth/google { code }. The server exchanges the code with Google
   // (client secret stays server-side), verifies the ID token, then finds or creates the user.
   await wait(900);
@@ -45,6 +75,7 @@ export async function signInWithGoogle(
       fullName: "Google User",
       email: "user@example.com",
     },
+    accessToken: mockToken(),
     isNewUser: mode === "signup",
   };
 }
