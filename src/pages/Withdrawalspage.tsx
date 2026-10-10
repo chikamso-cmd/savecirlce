@@ -7,7 +7,7 @@ import {
   RefreshCw,
   Search,
 } from "lucide-react";
-import { Pill } from "../components/widgets/DashboardWidgets";
+// import { Pill } from "../components/widgets/DashboardWidgets";
 import NewWithdrawalModal from "../components/modals/Newwithdrawals";
 import {
   CURRENT_USER,

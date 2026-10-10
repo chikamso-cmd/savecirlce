@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {
   AlertCircle,
@@ -20,10 +20,10 @@ import {
 } from "lucide-react";
 import { useTheme } from "../../contexts/useTheme";
 import {
-  sendSignupOtp,
+  // sendSignupOtp,
   signInWithGoogle,
-  signInWithPassword,
-  verifySignupOtp,
+  // signInWithPassword,
+  // verifySignupOtp,
   type AuthSession,
 } from "../../services/Api";
 import { preloadGoogle, requestGoogleCode } from "../../services/googleAuth";
@@ -309,7 +309,8 @@ function SignUpForm({
         phoneInput,
       };
       const res = await api.post(``, payload);
-      sessionStorage.setItem("data", JSON.stringify({ full_Name, phoneInput }));
+
+      sessionStorage.setItem("data", JSON.stringify(res.data));
       console.log(payload, "signup response");
       sendCode(normalized);
     } catch (err: any) {

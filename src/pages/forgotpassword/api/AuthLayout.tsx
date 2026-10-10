@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ChartNoAxesCombined, ShieldCheck, UsersRound } from 'lucide-react';
+import { ShieldCheck, UsersRound } from 'lucide-react';
 
 interface Props {
   title: string;
@@ -7,28 +7,28 @@ interface Props {
   children: ReactNode;
 }
 
-function Logo() {
-  return (
-    <div className="flex items-center gap-3">
-      <svg viewBox="0 0 56 56" className="size-10 lg:size-12" aria-hidden="true">
-        <circle cx="28" cy="28" r="27" fill="#047857" />
-        <circle cx="28" cy="28" r="15" fill="none" stroke="#fff" strokeWidth="3" />
-        <circle cx="28" cy="7" r="4" fill="#6EE7B7" />
-        <circle cx="46" cy="38" r="4" fill="#6EE7B7" />
-        <circle cx="10" cy="38" r="4" fill="#6EE7B7" />
-        <rect x="21" y="22" width="14" height="4" rx="2" fill="#fff" />
-        <rect x="21" y="29" width="14" height="4" rx="2" fill="#fff" />
-      </svg>
-      <div>
-        <p className="text-2xl font-extrabold leading-none tracking-tight lg:text-3xl">
-          <span className="text-slate-900">Save</span>
-          <span className="text-emerald-700">Circle</span>
-        </p>
-        <p className="mt-1 text-xs font-medium text-slate-700">Save Together. Grow Together.</p>
-      </div>
-    </div>
-  );
-}
+// function Logo() {
+//   return (
+//     <div className="flex items-center gap-3">
+//       <svg viewBox="0 0 56 56" className="size-10 lg:size-12" aria-hidden="true">
+//         <circle cx="28" cy="28" r="27" fill="#047857" />
+//         <circle cx="28" cy="28" r="15" fill="none" stroke="#fff" strokeWidth="3" />
+//         <circle cx="28" cy="7" r="4" fill="#6EE7B7" />
+//         <circle cx="46" cy="38" r="4" fill="#6EE7B7" />
+//         <circle cx="10" cy="38" r="4" fill="#6EE7B7" />
+//         <rect x="21" y="22" width="14" height="4" rx="2" fill="#fff" />
+//         <rect x="21" y="29" width="14" height="4" rx="2" fill="#fff" />
+//       </svg>
+//       <div>
+//         <p className="text-2xl font-extrabold leading-none tracking-tight lg:text-3xl">
+//           <span className="text-slate-900">Save</span>
+//           <span className="text-emerald-700">Circle</span>
+//         </p>
+//         <p className="mt-1 text-xs font-medium text-slate-700">Save Together. Grow Together.</p>
+//       </div>
+//     </div>
+//   );
+// }
 
 // Same two-panel look as onboarding: mint brand panel on large screens, single column on phones.
 export default function AuthLayout({ title, description, children }: Props) {

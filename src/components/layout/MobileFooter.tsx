@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Home, Users, Bell, User, Plus, Wallet } from "lucide-react";
+import { Home, Users, Bell, User, Wallet } from "lucide-react";
 
 export const mobileFooterLinks = [
   { name: "Home", path: "/dashboard", icon: Home },

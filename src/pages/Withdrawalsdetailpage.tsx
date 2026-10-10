@@ -9,7 +9,7 @@ import {
   RotateCcw,
   X,
 } from "lucide-react";
-import { Pill } from "../components/widgets/DashboardWidgets";
+// import { Pill } from "../components/widgets/DashboardWidgets";
 import {
   CURRENT_USER,
   POLICY,
