@@ -42,7 +42,7 @@ export default function VerifyOtpPage() {
   }, [secondsLeft]);
 
   // Opened directly without a request: start the flow again
-  if (!flow?.identifier) return <Navigate to="/forgot-password" replace />;
+  // if (!flow?.identifier) return <Navigate to="/forgot-password" replace />;
 
   const locked = attempts >= MAX_OTP_ATTEMPTS;
 
@@ -51,8 +51,8 @@ export default function VerifyOtpPage() {
     setVerifying(true);
     setError(null);
     try {
-      const { resetToken } = await verifyOtp(flow.identifier, value);
-      navigate("/reset-password", { replace: true, state: { resetToken } });
+      // const { resetToken } = await verifyOtp(flow.identifier, value);
+      // navigate("/reset-password", { replace: true, state: { resetToken } });
     } catch (e) {
       const next = attempts + 1;
       setAttempts(next);
@@ -70,12 +70,12 @@ export default function VerifyOtpPage() {
   const resend = async () => {
     setResending(true);
     setError(null);
-    await requestReset(flow.identifier);
+    // await requestReset(flow.identifier);
     setResending(false);
     setAttempts(0);
     setCode("");
     setSecondsLeft(RESEND_SECONDS);
-    setNotice(`A new code is on its way to ${flow.masked}.`);
+    // setNotice(`A new code is on its way to ${flow.masked}.`);
   };
 
   return (
@@ -83,9 +83,9 @@ export default function VerifyOtpPage() {
       title="Enter the code"
       description={
         <>
-          We sent a {OTP_LENGTH}-digit code by{" "}
-          {flow.channel === "sms" ? "SMS" : "email"} to{" "}
-          <span className="font-semibold text-slate-900">{flow.masked}</span>.
+          We sent a {OTP_LENGTH}-digit code by SMS
+          {/* {flow.channel === "sms" ? "SMS" : "email"} to{" "} */}
+          {/* <span className="font-semibold text-slate-900">{flow.masked}</span>. */}
         </>
       }
     >
@@ -145,12 +145,6 @@ export default function VerifyOtpPage() {
         </p>
 
         <div className="flex flex-col items-center gap-1 border-t border-slate-100 pt-4">
-          <Link
-            to="/forgot-password"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-slate-600 hover:text-emerald-700"
-          >
-            Use a different phone or email
-          </Link>
           <Link
             to="/login"
             className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900"

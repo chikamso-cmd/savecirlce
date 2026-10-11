@@ -5,12 +5,15 @@ import {
   ChevronDown,
   LogOut,
   Menu,
+  Moon,
   Search,
   Settings,
+  Sun,
   User,
   X,
 } from "lucide-react";
 import { attention, currentUser, organisation } from "../../lib/DashboardData";
+import { useTheme } from "../../contexts/useTheme";
 
 type Panel = "notifications" | "profile" | null;
 
@@ -21,6 +24,7 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
   const [query, setQuery] = useState("");
   const [branch, setBranch] = useState("all");
   const panelsRef = useRef<HTMLDivElement>(null);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   // Close dropdowns on outside click or Escape
   useEffect(() => {
@@ -56,7 +60,7 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
   const toggle = (p: Panel) => setPanel((cur) => (cur === p ? null : p));
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header className={`sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur ${isDarkMode? "bg-red-300" : "bg-pink-500"}`}>
       <div className="flex h-16 justify-between items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
         <button
           type="button"
@@ -117,6 +121,23 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
         </button>
 
         <div ref={panelsRef} className="flex items-center gap-1 sm:gap-2">
+          {/* dark mode toggler button */}
+          <div>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
+              title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
+              className="mr-4 rounded-full p-2 text-[#615d5d] transition-colors hover:bg-[#103b4a]"
+            >
+              {isDarkMode ? (
+                <Sun className="size-4" />
+              ) : (
+                <Moon className="size-4" />
+              )}
+            </button>
+          </div>
+          
           <div className="relative">
             <button
               type="button"

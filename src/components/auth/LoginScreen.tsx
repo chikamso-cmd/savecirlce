@@ -6,19 +6,17 @@ import {
   ArrowLeft,
   ArrowRight,
   ChartNoAxesCombined,
-  Eye,
-  EyeOff,
   Loader2,
-  LockKeyhole,
-  Mail,
   MessageSquareText,
   ShieldCheck,
   UserRound,
   UsersRound,
   Sun,
   Moon,
+  Loader,
 } from "lucide-react";
 import { useTheme } from "../../contexts/useTheme";
+import loginImage from "../../assets/images/login.jpg";
 import {
   // sendSignupOtp,
   signInWithGoogle,
@@ -36,7 +34,7 @@ const fieldClass =
   "h-11 w-full rounded-lg border border-[#dce5eb] pl-10 pr-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15";
 const labelClass = "mb-2 block text-xs font-semibold text-[#24445b]";
 const primaryBtn =
-  "mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#07835e] text-sm font-bold text-white transition-colors hover:bg-[#066c4f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087f5b] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60";
+  "mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#07835e] text-sm font-bold text-white transition-colors hover:bg-[#066c4f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087f5b] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
 
 // Accepts 0803…, 803… or +234803…; returns +234XXXXXXXXXX or null
 function normalizeNgPhone(input: string): string | null {
@@ -130,33 +128,35 @@ function GoogleButton({ mode }: { mode: "login" | "signup" }) {
 }
 
 function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false);
+  // const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [error, setError] = useState<string | null>(null);
-  const afterLogin = useAfterLogin();
+  const [phoneInput, setPhoneInput] = useState<string>("");
+  // const [password, setPassword] = useState<string>();
+  const [error, setError] = useState("");
+  // const afterLogin = useAfterLogin();
   const navigate = useNavigate();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // const form = new FormData(event.currentTarget);
-    setBusy(true);
-    setError(null);
+    
+    console.log("btn clicked");
+    if (!phoneInput) {
+      toast.error("please enter phone number to continue");
+    }
+    if (!phoneInput) {
+      setError("Please enter phone number to continue");
+      return;
+    }
     try {
-      const payload = {
-        email,
-        password,
-        rememberMe,
-      };
-      saveSession(
-         await api.post(``, payload)
-        );
-      console.log(payload, "login payload");
-      afterLogin();
-    } catch (e) {
-      setError((e as Error).message);
+
+      navigate(`/verify`);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message);
     } finally {
       setBusy(false);
     }
@@ -164,26 +164,33 @@ function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      {error && (
+        <p className="bg-red-50 text-green-800 p-3 border-l-2 border-red-700 rounded-xs text-[14px]">
+          {error}
+        </p>
+      )}
       <div>
-        <label htmlFor="email" className={labelClass}>
-          Email Address
+        <label htmlFor="phone" className={labelClass}>
+          Phone number
         </label>
-        <div className="relative">
-          <Mail className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#557188]" />
+        <div className="flex">
+          <span className="inline-flex h-11 items-center rounded-l-lg border border-r-0 border-[#dce5eb] bg-[#f7faf9] px-3 text-sm font-medium text-[#24445b]">
+            +234
+          </span>
           <input
-            id="email"
-            name="email"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="username"
-            required
-            placeholder="Enter your email or phone number"
-            className={fieldClass}
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel-national"
+            value={phoneInput}
+            onChange={(e) => setPhoneInput(e.target.value)}
+            placeholder="0803 123 4567"
+            className="h-11 w-full rounded-r-lg border border-[#dce5eb] px-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15"
           />
         </div>
       </div>
-      <div>
+      {/* <div>
         <label htmlFor="password" className={labelClass}>
           Password
         </label>
@@ -212,8 +219,8 @@ function LoginForm() {
               <Eye className="size-4" />
             )}
           </button>
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
       <div className="flex items-center justify-between gap-3 text-xs">
         <label className="flex items-center gap-2 text-[#24445b]">
           <input
@@ -224,22 +231,23 @@ function LoginForm() {
           />
           Remember me
         </label>
-        <button
+        {/* <button
           type="button"
           onClick={() => navigate("/forgot-password")}
           className="font-semibold text-[#087f5b] hover:underline"
         >
           Forgot password?
-        </button>
+        </button> */}
       </div>
       {error && <ErrorText>{error}</ErrorText>}
       <button type="submit" disabled={busy} className={primaryBtn}>
         {busy ? (
-          <Loader2 className="size-4 animate-spin" />
+          <div className="flex items-center gap-4 justify-cente">
+            <Loader className="size-4 animate-spin text-white" />
+            Sending code
+          </div>
         ) : (
-          <>
-            Log In <ArrowRight className="size-4" />
-          </>
+          <>Send Code</>
         )}
       </button>
       <GoogleButton mode="login" />
@@ -300,24 +308,24 @@ function SignUpForm({
   const handleDetails = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAttempted(true);
-    const normalized = normalizeNgPhone(phoneInput);
-    if (errors.name || errors.terms || !normalized) return;
-    // signup logic
-    try {
-      const payload = {
-        full_Name,
-        phoneInput,
-      };
-      const res = await api.post(``, payload);
+    // const normalized = normalizeNgPhone(phoneInput);
+    // if (errors.name || errors.terms || !normalized) return;
+    // // signup logic
+    // try {
+    //   const payload = {
+    //     full_Name,
+    //     phoneInput,
+    //   };
+    //   // const res = await api.post(``, payload);
 
-      sessionStorage.setItem("data", JSON.stringify(res.data));
-      console.log(payload, "signup response");
-      sendCode(normalized);
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setAttempted(false);
-    }
+    //   // sessionStorage.setItem("data", JSON.stringify(res.data));
+    //   console.log(payload, "signup response");
+    //   sendCode(normalized);
+    // } catch (err: any) {
+    //   toast.error(err.message);
+    // } finally {
+    //   setAttempted(false);
+    // }
   };
 
   const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
@@ -331,7 +339,7 @@ function SignUpForm({
         full_Name,
         code,
       };
-      await api.post(``, payload);
+      // await api.post(``, payload);
       console.log;
       afterLogin();
     } catch (e) {
@@ -525,7 +533,8 @@ const AuthForm = ({ mode }: AuthFormProps) => {
           <div className="relative z-10 flex items-center gap-3">
             <img
               src="/src/assets/images/SaveCircle_logo.png"
-              alt="save circle logo"
+              alt="sacevircle logo"
+              width={230}
             />
           </div>
 
@@ -557,7 +566,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
 
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url('/src/assets/images/login.jpg')" }}
+            style={{ backgroundImage: `url(${loginImage})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-b from-[#064d3d] via-transparent to-[#064d3d]/10" />
           </div>
@@ -572,7 +581,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
                 onClick={toggleTheme}
                 aria-label={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
                 title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
-                className="mr-4 rounded-full p-2 text-[#fff] transition-colors hover:bg-[#103b4a]"
+                className="mr-4 rounded-full p-2 text-[#615d5d] transition-colors hover:bg-[#103b4a]"
               >
                 {isDarkMode ? (
                   <Sun className="size-4" />

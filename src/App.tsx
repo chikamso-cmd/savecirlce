@@ -22,20 +22,20 @@ import TeamPage from "./pages/Teamspage";
 import ReportsPage from "./pages/Reportspage";
 // import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
-import ResetPasswordPage from "./pages/forgotpassword/Resetpasswordpage";
+// import ResetPasswordPage from "./pages/forgotpassword/Resetpasswordpage";
 import VerifyOtpPage from "./pages/forgotpassword/Verifyotppag";
-import ForgotPasswordPage from "./pages/forgotpassword/Forgotpasswordpage";
+// import ForgotPasswordPage from "./pages/forgotpassword/Forgotpasswordpage";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<SaveCircleSplash />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignUpScreen />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/forgot-password/verify" element={<VerifyOtpPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        {/* <Route path="/forgot-password" element={<ForgotPasswordPage />} /> */}
+        <Route path="/verify" element={<VerifyOtpPage />} />
+        {/* <Route path="/reset-password" element={<ResetPasswordPage />} /> */}
         {/* <Route element={<ProtectedRoute />}> */}
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route element={<DashboardLayout />}>

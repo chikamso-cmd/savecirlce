@@ -42,7 +42,7 @@ export default function ResetPasswordPage() {
     document.title = "Reset password | SaveCircle";
   }, []);
 
-  if (!resetToken && !done) return <Navigate to="/forgot-password" replace />;
+  // if (!resetToken && !done) return <Navigate to="/forgot-password" replace />;
 
   const passed = RULES.filter((r) => r.test(password)).length;
   const strength = STRENGTH[password ? passed : 0];

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { Check, Clock, History, Landmark } from "lucide-react";
+import { Check, Clock, History, Landmark, Moon, Sun } from "lucide-react";
 import type { StepStatus } from "../../types/types";
+import { useTheme } from "../../contexts/useTheme";
 
 export const btnPrimary =
   "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-6 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300";
@@ -23,6 +24,7 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
     0,
     statuses.findIndex((s) => s === "current" || s === "review"),
   );
+  
 
   return (
     <nav aria-label="Onboarding progress">
@@ -93,7 +95,7 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
 function Logo() {
   return (
     <div className="flex items-center gap-3">
-      <img src="/src/assets/images/logo.png" alt="sacevircle logo" width={230}/>
+      <img src="/src/assets/images/logo.png" alt="sacevircle logo" width={230} />
     </div>
   );
 }
@@ -119,6 +121,7 @@ export default function OnboardingLayout({
   illustrationSrc,
   children,
 }: LayoutProps) {
+  const { isDarkMode, toggleTheme } = useTheme();
   return (
     <div className="min-h-screen bg-white text-slate-900 lg:grid lg:grid-cols-[minmax(340px,420px)_1fr]">
       <aside className="relative overflow-hidden bg-emerald-50 px-5 pb-6 pt-5 sm:px-8 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:px-12 lg:pt-12">
@@ -155,15 +158,33 @@ export default function OnboardingLayout({
       </aside>
 
       <main className="mx-auto w-full max-w-5xl px-5 pb-10 pt-4 sm:px-8 lg:px-14 lg:pt-8">
-        <div className="mb-4 flex justify-end lg:mb-8">
-          <button
-            type="button"
-            onClick={onSaveLater}
-            className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-slate-600 hover:text-emerald-700"
-          >
-            <History className="size-4" aria-hidden="true" />
-            Save and continue later
-          </button>
+        <div className="flex items-center justify-between">
+          {/* dark mode toggler button */}
+          <div>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
+              title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
+              className="mr-4 rounded-full p-2 text-[#615d5d] transition-colors hover:bg-[#103b4a]"
+            >
+              {isDarkMode ? (
+                <Sun className="size-4" />
+              ) : (
+                <Moon className="size-4" />
+              )}
+            </button>
+          </div>
+          <div className="mb-4 flex justify-end lg:mb-8">
+            <button
+              type="button"
+              onClick={onSaveLater}
+              className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-slate-600 hover:text-emerald-700"
+            >
+              <History className="size-4" aria-hidden="true" />
+              Save and continue later
+            </button>
+          </div>
         </div>
         <Stepper statuses={statuses} />
         <div className="mt-8 sm:mt-10">{children}</div>

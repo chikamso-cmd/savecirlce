@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import { ShieldCheck, UsersRound } from 'lucide-react';
+import logo from '../../../assets/images/SaveCircle_logo.png';
+import loginImage from '../../../assets/images/login.jpg';
 
 interface Props {
   title: string;
@@ -39,7 +41,7 @@ export default function AuthLayout({ title, description, children }: Props) {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_88%_35%,rgba(16,144,101,0.45),transparent_40%),linear-gradient(145deg,#064d3d_0%,#053c33_72%,#07392f_100%)]" />
           <div className="relative z-10 flex items-center gap-3">
             <img
-              src="/src/assets/images/SaveCircle_logo.png"
+              src={logo}
               alt="save circle logo"
             />
           </div>
@@ -69,7 +71,7 @@ export default function AuthLayout({ title, description, children }: Props) {
 
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url('/src/assets/images/login.jpg')" }}
+            style={{ backgroundImage: `url(${loginImage})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-b from-[#064d3d] via-transparent to-[#064d3d]/10" />
           </div>

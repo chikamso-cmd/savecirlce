@@ -13,7 +13,11 @@ interface SidebarProps {
 function Logo() {
   return (
     <div className="flex items-center gap-2.5">
-     <img src="/src/assets/images/SaveCircle_logo.png" alt="savecircle logo"  width={160}/>
+      <img
+        src="/src/assets/images/SaveCircle_logo.png"
+        alt="sacevircle logo"
+        width={160}
+      />
     </div>
   );
 }

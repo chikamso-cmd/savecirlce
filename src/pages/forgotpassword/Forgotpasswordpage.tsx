@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
     setSending(true);
     try {
       const res = await requestReset(value);
-      navigate("/forgot-password/verify", {
+      navigate("/verify", {
         state: { identifier: value, ...res },
       });
     } catch (error:any){

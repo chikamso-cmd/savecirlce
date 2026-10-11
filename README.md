@@ -26,6 +26,13 @@ npm run dev
 
 Vite prints the local URL in the terminal, typically `http://localhost:5173`.
 
+## Deployment
+
+Pushes to `main` build the Vite app and deploy the `dist` directory to GitHub
+Pages, including a fallback for client-side routes. In the repository settings,
+set **Pages → Build and deployment → Source** to **GitHub Actions**. The site is
+configured for the project URL `https://chikamso-cmd.github.io/savecirlce/`.
+
 ## Available Scripts
 
 | Command           | Description                                             |
