@@ -1,7 +1,16 @@
-import { AlertCircle, ArrowLeft, Loader, MessageSquareText } from 'lucide-react';
-import AuthLayout from '../../pages/forgotpassword/api/AuthLayout'
-import { useEffect, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import {
+  AlertCircle,
+  ArrowLeft,
+  Key,
+  Loader,
+  MessageSquareText,
+  Phone,
+} from "lucide-react";
+import AuthLayout from "../../pages/forgotpassword/api/AuthLayout";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { api } from "../../services/Axios";
+import { toast } from "react-toastify";
 
 const fieldClass =
   "h-11 w-full rounded-lg border border-[#dce5eb] pl-10 pr-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15";
@@ -9,8 +18,8 @@ const labelClass = "mb-2 block text-xs font-semibold text-[#24445b]";
 const primaryBtn =
   "mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#07835e] text-sm font-bold text-white transition-colors hover:bg-[#066c4f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087f5b] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
 
-const maskPhone = (e164: string) =>
-  `${e164.slice(0, 4)} ${e164.slice(4, 7)} *** ${e164.slice(-4)}`;
+const maskPhone = (e164: any) =>
+  `${e164.slice(0, 4)} ${e164.slice(4, 5)} **** ${e164.slice(-5)}`;
 
 function ErrorText({ children }: { children: string }) {
   return (
@@ -24,42 +33,70 @@ function ErrorText({ children }: { children: string }) {
   );
 }
 export default function Verifyotp() {
-
   const [code, setCode] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("")
-   const [resendIn, setResendIn] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [resendIn, setResendIn] = useState(0);
 
-     useEffect(() => {
-       if (resendIn <= 0) return;
-       const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
-       return () => clearTimeout(t);
-     }, [resendIn]);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendIn]);
 
-     const phone = sessionStorage.getItem("phone")
-      const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setBusy(true);
-        setError("");
-        try {
-          const payload = {
-            phone,
-            code,
-          };
-          // await api.post(``, payload);
-          console.log;
-        } catch (e) {
-          setError("");
-        } finally {
-          setBusy(false);
-        }
+  const phone = sessionStorage.getItem("phone");
+  const sendCode = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const payload = {
+        phone,
+        code,
       };
+      // await api.post(``, payload);
+      console.log(payload, "load");
+      // setPhone(to);
+      setCode("");
+      setResendIn(60);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      setLoading(true);
+      const payload = {
+        phone,
+        code,
+      };
+      await api.post(``, payload);
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 3500);
+      setError("");
+      toast.success("verification successful redirecting to dashboard");
+      console.log("btn clickrd", payload);
+    } catch (err: any) {
+      setError("");
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    <AuthLayout title="hhhhhhh" description ={"hhhhhhhhhhhh"}>
-         <form onSubmit={handleVerify} className="mt-8 space-y-5">
+    <AuthLayout
+      title="Enter the code "
+      description={`Check your phone, We sent a 6-digit code by SMS to ${maskPhone(phone)}`}
+    >
+      <form onSubmit={handleVerify} className="mt-8 space-y-5">
         <p className="rounded-lg border border-[#cce9dc] bg-[#f1faf5] p-3 text-sm text-[#075c43]">
-          Code sent to <span className="font-semibold">{maskPhone("phone")}</span>
+          Code sent to <span className="font-semibold">{maskPhone(phone)}</span>
         </p>
         <div>
           <label htmlFor="otp" className={labelClass}>
@@ -85,29 +122,24 @@ export default function Verifyotp() {
 
         <button
           type="submit"
-          disabled={busy || code.length !== 6}
+          disabled={loading || code.length !== 6}
           className={primaryBtn}
         >
-          {busy ? (
-            <Loader className="size-4 animate-spin" />
-          ) : (
-            <>
-              Verify and continue 
-            </>
-          )}
+          {loading && <Loader size={20} className=" animate-spin" />}
+          {loading ? "Verifying" : "Verify and continue"}
         </button>
 
         <div className="flex items-center justify-between gap-3 text-xs">
           <Link to="/signup">
-              <button
-                type="button"
-                onClick={() => {
-                  setError("");
-                }}
-                className="inline-flex items-center gap-1 font-semibold text-[#087f5b] hover:underline"
-              >
-                <ArrowLeft className="size-3.5" /> Change number
-              </button>
+            <button
+              type="button"
+              onClick={() => {
+                setError("");
+              }}
+              className="inline-flex items-center gap-1 font-semibold text-[#087f5b] hover:underline"
+            >
+              <ArrowLeft className="size-3.5" /> Change number
+            </button>
           </Link>
           {resendIn > 0 ? (
             <span className="text-[#61778a]" aria-live="polite">
@@ -116,8 +148,8 @@ export default function Verifyotp() {
           ) : (
             <button
               type="button"
-              disabled={busy}
-              onClick={ () => handleVerify}
+              // disabled={loading}
+              onClick={() => sendCode}
               className="font-semibold text-[#087f5b] hover:underline disabled:opacity-50"
             >
               Resend code
@@ -125,8 +157,6 @@ export default function Verifyotp() {
           )}
         </div>
       </form>
-    
-  
     </AuthLayout>
-  )
+  );
 }

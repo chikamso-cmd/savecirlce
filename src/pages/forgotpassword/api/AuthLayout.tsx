@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { ShieldCheck, UsersRound } from 'lucide-react';
-import logo from '../../../assets/images/SaveCircle_logo.png';
-import loginImage from '../../../assets/images/login.jpg';
+import type { ReactNode } from "react";
+import { ShieldCheck, UsersRound } from "lucide-react";
+import logo from "../../../assets/images/SaveCircle_logo.png";
+import loginImage from "../../../assets/images/login.jpg";
 
 interface Props {
   title: string;
@@ -40,10 +40,7 @@ export default function AuthLayout({ title, description, children }: Props) {
         <aside className="relative hidden md:flex flex-col overflow-hidden bg-[#064d3d] px-10 py-10 lg:px-14 lg:py-12 text-white ">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_88%_35%,rgba(16,144,101,0.45),transparent_40%),linear-gradient(145deg,#064d3d_0%,#053c33_72%,#07392f_100%)]" />
           <div className="relative z-10 flex items-center gap-3">
-            <img
-              src={logo}
-              alt="save circle logo"
-            />
+            <img src={logo} alt="save circle logo" />
           </div>
 
           <div className="relative z-10 mt-10 lg:mt-14 max-w-md">
@@ -65,7 +62,6 @@ export default function AuthLayout({ title, description, children }: Props) {
                 <UsersRound className="size-5 text-[#51d8a0]" />
                 Your access, restored.
               </li>
-    
             </ul>
           </div>
 
@@ -76,13 +72,13 @@ export default function AuthLayout({ title, description, children }: Props) {
             <div className="absolute inset-0 bg-gradient-to-b from-[#064d3d] via-transparent to-[#064d3d]/10" />
           </div>
         </aside>
-       
+
         <main className="flex min-h-screen flex-col px-5 py-8 sm:px-8 lg:min-h-0 lg:justify-center lg:px-16 ">
           <div className="mx-auto mt-50 w-full max-w-md lg:mt-0">
             <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
               {title}
             </h1>
-            <div className="mt-2 text-base leading-relaxed text-slate-600">
+            <div className="mt-2 text-base leading-relaxed text-slate-600 text-[13px]">
               {description}
             </div>
             <div className="mt-8">{children}</div>

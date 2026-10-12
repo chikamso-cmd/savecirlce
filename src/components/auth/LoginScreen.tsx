@@ -49,13 +49,13 @@ const maskPhone = (e164: string) =>
 
 function ErrorText({ children }: { children: string }) {
   return (
-    <p
+    <div
       role="alert"
-      className="mt-2 flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 p-2 tounded-md text-[10px]"
+      className="mt-2 flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 p-2 tounded-md text-[12px]"
     >
       <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
       {children}
-    </p>
+    </div>
   );
 }
 
@@ -308,24 +308,36 @@ function SignUpForm({
 
   const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
 
+    if (!full_Name) {
+      setError("please enter your full name!");
+      return null;
+    }
+    if (!phoneInput) {
+      setError("please fill all fields and agree to the terms to continue!");
+      return null;
+    }
+    if (!agreed) {
+      setError("please agree to the terms of use to continue!");
+      return null;
+    }
     try {
-      if (!phoneInput || !full_Name || !agreed) {
-        setError("please fill all fields and agree to the terms to continue!");
-        return null;
-      }
       setBusy(true);
       setTimeout(() => {
-        setError("");
+        if (agreed) {
+          setError("");
+        }
       }, 3000);
       const payload = {
         phoneInput,
         full_Name,
       };
       // await api.post(``, payload);
+      sessionStorage.setItem("phone", phoneInput)
       console.log("btn clicked", payload);
       navigate("/signup/verify");
-    } catch (err:any) {
+    } catch (err: any) {
       console.error("error navigating");
     } finally {
       setBusy(false);

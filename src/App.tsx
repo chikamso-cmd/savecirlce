@@ -35,7 +35,7 @@ export default function App() {
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignUpScreen />} />
         {/* <Route path="/forgot-password" element={<ForgotPasswordPage />} /> */}
-        <Route path="`/signup/verify`" element={<Verifyotp />} />
+        <Route path="/signup/verify" element={<Verifyotp />} />
         <Route path="/verify" element={<VerifyOtpPage />} />
         {/* <Route path="/reset-password" element={<ResetPasswordPage />} /> */}
         {/* <Route element={<ProtectedRoute />}> */}
