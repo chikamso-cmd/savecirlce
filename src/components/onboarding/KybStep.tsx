@@ -7,16 +7,16 @@ import {
   Eye,
   FileText,
   Loader2,
-  Plus,
-  Trash2,
+  // Plus,
+  // Trash2,
   UploadCloud,
   X,
 } from "lucide-react";
-import { resolveAccountName } from "../../services/Api";
-import { btnGhost, btnPrimary, inputBase } from "./OnboardingLayout";
+// import { resolveAccountName } from "../../services/Api";
+import { btnGhost, btnPrimary } from "./OnboardingLayout";
 import {
   ACCEPTED_TYPES,
-  BANKS,
+  // BANKS,
   MAX_FILE_BYTES,
   documentsFor,
   type DocSlot,
@@ -171,50 +171,45 @@ export default function KybStep({
   const [resolving, setResolving] = useState(false);
   const [resolveError, setResolveError] = useState<string | null>(null);
 
-  const { directors, settlement } = value;
+  // const { directors, settlement } = value;
   const needsCompanyChecks = orgType !== "informal";
 
-  const setDirector = (
-    id: string,
-    patch: Partial<{ fullName: string; bvn: string }>,
-  ) =>
-    onChange({
-      ...value,
-      directors: directors.map((d) => (d.id === id ? { ...d, ...patch } : d)),
-    });
+  // const setDirector = (
+  //   id: string,
+  //   patch: Partial<{ fullName: string; bvn: string }>,
+  // ) =>
+  //   onChange({
+  //     ...value,
+  //     directors: directors.map((d) => (d.id === id ? { ...d, ...patch } : d)),
+  //   });
 
-  const setSettlement = (patch: Partial<typeof settlement>) =>
-    onChange({
-      ...value,
-      settlement: { ...settlement, accountName: null, ...patch },
-    });
+  // const setSettlement = (patch: Partial<typeof settlement>) =>
+  //   onChange({
+  //     ...value,
+  //     settlement: { ...settlement, accountName: null, ...patch },
+  //   });
 
-  const verifyAccount = async () => {
-    setResolving(true);
-    setResolveError(null);
-    try {
-      const name = await resolveAccountName(
-        settlement.bankCode,
-        settlement.accountNumber,
-      );
-      onChange({ ...value, settlement: { ...settlement, accountName: name } });
-    } catch (e) {
-      setResolveError((e as Error).message);
-    } finally {
-      setResolving(false);
-    }
-  };
+  // const verifyAccount = async () => {
+  //   setResolving(true);
+  //   setResolveError(null);
+  //   try {
+  //     const name = await resolveAccountName(
+  //       // settlement.bankCode,
+  //       // settlement.accountNumber,
+  //     );
+  //     // onChange({ ...value, settlement: { ...settlement, accountName: name } });
+  //   } catch (e) {
+  //     setResolveError((e as Error).message);
+  //   } finally {
+  //     setResolving(false);
+  //   }
+  // };
 
   const errors = {
     docs: slots.some((s) => s.required && !value.documents[s.id]),
-    directors:
-      needsCompanyChecks &&
-      directors.some(
-        (d) => d.fullName.trim().length < 3 || !/^\d{11}$/.test(d.bvn),
-      ),
-    settlement: needsCompanyChecks && !settlement.accountName,
+    needsCompanyChecks,
   };
-  const hasErrors = errors.docs || errors.directors || errors.settlement;
+  const hasErrors = errors.docs;
 
   const handleSubmit = async () => {
     setAttempted(true);
@@ -243,7 +238,7 @@ export default function KybStep({
         </p>
       </header>
 
-      {attempted && hasErrors && (
+      {attempted && (
         <div
           id="kyb-error-summary"
           tabIndex={-1}
@@ -253,10 +248,10 @@ export default function KybStep({
           <AlertCircle className="size-5 shrink-0" aria-hidden="true" />
           <ul className="space-y-1">
             {errors.docs && <li>Upload every required document.</li>}
-            {errors.directors && (
+            {/* {errors.directors && (
               <li>Add each director's full name and 11-digit BVN.</li>
             )}
-            {errors.settlement && <li>Verify your settlement bank account.</li>}
+            {errors.settlement && <li>Verify your settlement bank account.</li>} */}
           </ul>
         </div>
       )}
@@ -286,7 +281,7 @@ export default function KybStep({
         </div>
       </section>
 
-      {needsCompanyChecks && (
+      {/* {needsCompanyChecks && (
         <section aria-labelledby="directors-heading">
           <h3
             id="directors-heading"
@@ -370,9 +365,9 @@ export default function KybStep({
             <Plus className="size-4" /> Add another director
           </button>
         </section>
-      )}
+      )} */}
 
-      {needsCompanyChecks && (
+      {/* {needsCompanyChecks && (
         <section aria-labelledby="settlement-heading">
           <h3
             id="settlement-heading"
@@ -448,9 +443,9 @@ export default function KybStep({
             )}
           </div>
         </section>
-      )}
+      )} */}
 
-      <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col-reverse gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
         <button type="button" onClick={onBack} className={btnGhost}>
           <ChevronLeft className="size-4" /> Back
         </button>

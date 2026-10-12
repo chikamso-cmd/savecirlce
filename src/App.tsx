@@ -24,6 +24,7 @@ import ReportsPage from "./pages/Reportspage";
 import { ToastContainer } from "react-toastify";
 // import ResetPasswordPage from "./pages/forgotpassword/Resetpasswordpage";
 import VerifyOtpPage from "./pages/forgotpassword/Verifyotppag";
+import Verifyotp from "./components/auth/Verifyotp";
 // import ForgotPasswordPage from "./pages/forgotpassword/Forgotpasswordpage";
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignUpScreen />} />
         {/* <Route path="/forgot-password" element={<ForgotPasswordPage />} /> */}
+        <Route path="`/signup/verify`" element={<Verifyotp />} />
         <Route path="/verify" element={<VerifyOtpPage />} />
         {/* <Route path="/reset-password" element={<ResetPasswordPage />} /> */}
         {/* <Route element={<ProtectedRoute />}> */}

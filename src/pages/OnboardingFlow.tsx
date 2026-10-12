@@ -103,12 +103,12 @@ export default function OnboardingFlow({
         setSubmission(draft.submission);
         setScreen(draft.screen === "kyb" ? "pending" : draft.screen);
       }
-      if (draft.directors?.length)
-        setKyb((k) => ({
-          ...k,
-          directors: draft.directors,
-          settlement: draft.settlement ?? k.settlement,
-        }));
+      // if (draft.directors?.length)
+      //   setKyb((k) => ({
+      //     ...k,
+      //     directors: draft.directors,
+      //     settlement: draft.settlement ?? k.settlement,
+      //   }));
     } catch {
       /* ignore a corrupt draft */
     }
@@ -123,8 +123,8 @@ export default function OnboardingFlow({
           org,
           organisationId,
           submission,
-          directors: kyb.directors,
-          settlement: kyb.settlement,
+          // directors: kyb.directors,
+          // settlement: kyb.settlement,
         }),
       );
       setToast("Progress saved. Pick up where you left off any time.");

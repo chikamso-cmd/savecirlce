@@ -3,11 +3,11 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {
   AlertCircle,
-  ArrowLeft,
+  // ArrowLeft,
   ArrowRight,
   ChartNoAxesCombined,
   Loader2,
-  MessageSquareText,
+  // MessageSquareText,
   ShieldCheck,
   UserRound,
   UsersRound,
@@ -51,7 +51,7 @@ function ErrorText({ children }: { children: string }) {
   return (
     <p
       role="alert"
-      className="mt-2 flex items-center gap-1.5 text-xs font-medium text-red-600"
+      className="mt-2 flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 p-2 tounded-md text-[10px]"
     >
       <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
       {children}
@@ -139,7 +139,7 @@ function LoginForm() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     console.log("btn clicked");
     if (!phoneInput) {
       toast.error("please enter phone number to continue");
@@ -149,7 +149,6 @@ function LoginForm() {
       return;
     }
     try {
-
       navigate(`/verify`);
       setTimeout(() => {
         setError("");
@@ -274,6 +273,8 @@ function SignUpForm({
   const [error, setError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (resendIn <= 0) return;
     const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
@@ -305,124 +306,126 @@ function SignUpForm({
     }
   };
 
-  const handleDetails = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setAttempted(true);
-    // const normalized = normalizeNgPhone(phoneInput);
-    // if (errors.name || errors.terms || !normalized) return;
-    // // signup logic
-    // try {
-    //   const payload = {
-    //     full_Name,
-    //     phoneInput,
-    //   };
-    //   // const res = await api.post(``, payload);
 
-    //   // sessionStorage.setItem("data", JSON.stringify(res.data));
-    //   console.log(payload, "signup response");
-    //   sendCode(normalized);
-    // } catch (err: any) {
-    //   toast.error(err.message);
-    // } finally {
-    //   setAttempted(false);
-    // }
-  };
-
-  const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!phone) return;
-    setBusy(true);
-    setError(null);
     try {
+      if (!phoneInput || !full_Name || !agreed) {
+        setError("please fill all fields and agree to the terms to continue!");
+        return null;
+      }
+      setBusy(true);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       const payload = {
         phoneInput,
         full_Name,
-        code,
       };
       // await api.post(``, payload);
-      console.log;
-      afterLogin();
-    } catch (e) {
-      setError((e as Error).message);
+      console.log("btn clicked", payload);
+      navigate("/signup/verify");
+    } catch (err:any) {
+      console.error("error navigating");
     } finally {
       setBusy(false);
     }
   };
+  // const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   if (!phone) return;
+  //   setBusy(true);
+  //   setError(null);
+  //   try {
+  //     const payload = {
+  //       phoneInput,
+  //       full_Name,
+  //       code,
+  //     };
+  //     // await api.post(``, payload);
+  //     console.log;
+  //     afterLogin();
+  //   } catch (e) {
+  //     setError((e as Error).message);
+  //   } finally {
+  //     setBusy(false);
+  //   }
+  // };
 
-  if (stage === "otp" && phone) {
-    return (
-      <form onSubmit={handleVerify} className="mt-8 space-y-5">
-        <p className="rounded-lg border border-[#cce9dc] bg-[#f1faf5] p-3 text-sm text-[#075c43]">
-          Code sent to <span className="font-semibold">{maskPhone(phone)}</span>
-        </p>
-        <div>
-          <label htmlFor="otp" className={labelClass}>
-            6-digit code
-          </label>
-          <div className="relative">
-            <MessageSquareText className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#557188]" />
-            <input
-              id="otp"
-              name="otp"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              autoFocus
-              maxLength={6}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              placeholder="••••••"
-              className={`${fieldClass} tracking-[0.5em]`}
-            />
-          </div>
-          {error && <ErrorText>{error}</ErrorText>}
-        </div>
+  // if (stage === "otp" && phone) {
+  //   return (
+  //     <form onSubmit={handleVerify} className="mt-8 space-y-5">
+  //       <p className="rounded-lg border border-[#cce9dc] bg-[#f1faf5] p-3 text-sm text-[#075c43]">
+  //         Code sent to <span className="font-semibold">{maskPhone(phone)}</span>
+  //       </p>
+  //       <div>
+  //         <label htmlFor="otp" className={labelClass}>
+  //           6-digit code
+  //         </label>
+  //         <div className="relative">
+  //           <MessageSquareText className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#557188]" />
+  //           <input
+  //             id="otp"
+  //             name="otp"
+  //             inputMode="numeric"
+  //             autoComplete="one-time-code"
+  //             autoFocus
+  //             maxLength={6}
+  //             value={code}
+  //             onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+  //             placeholder="••••••"
+  //             className={`${fieldClass} tracking-[0.5em]`}
+  //           />
+  //         </div>
+  //         {error && <ErrorText>{error}</ErrorText>}
+  //       </div>
 
-        <button
-          type="submit"
-          disabled={busy || code.length !== 6}
-          className={primaryBtn}
-        >
-          {busy ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <>
-              Verify and continue <ArrowRight className="size-4" />
-            </>
-          )}
-        </button>
+  //       <button
+  //         type="submit"
+  //         disabled={busy || code.length !== 6}
+  //         className={primaryBtn}
+  //       >
+  //         {busy ? (
+  //           <Loader2 className="size-4 animate-spin" />
+  //         ) : (
+  //           <>
+  //             Verify and continue <ArrowRight className="size-4" />
+  //           </>
+  //         )}
+  //       </button>
 
-        <div className="flex items-center justify-between gap-3 text-xs">
-          <button
-            type="button"
-            onClick={() => {
-              setError(null);
-              onStageChange("details");
-            }}
-            className="inline-flex items-center gap-1 font-semibold text-[#087f5b] hover:underline"
-          >
-            <ArrowLeft className="size-3.5" /> Change number
-          </button>
-          {resendIn > 0 ? (
-            <span className="text-[#61778a]" aria-live="polite">
-              Resend code in {resendIn}s
-            </span>
-          ) : (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => sendCode(phone)}
-              className="font-semibold text-[#087f5b] hover:underline disabled:opacity-50"
-            >
-              Resend code
-            </button>
-          )}
-        </div>
-      </form>
-    );
-  }
+  //       <div className="flex items-center justify-between gap-3 text-xs">
+  //         <button
+  //           type="button"
+  //           onClick={() => {
+  //             setError(null);
+  //             onStageChange("details");
+  //           }}
+  //           className="inline-flex items-center gap-1 font-semibold text-[#087f5b] hover:underline"
+  //         >
+  //           <ArrowLeft className="size-3.5" /> Change number
+  //         </button>
+  //         {resendIn > 0 ? (
+  //           <span className="text-[#61778a]" aria-live="polite">
+  //             Resend code in {resendIn}s
+  //           </span>
+  //         ) : (
+  //           <button
+  //             type="button"
+  //             disabled={busy}
+  //             onClick={() => sendCode(phone)}
+  //             className="font-semibold text-[#087f5b] hover:underline disabled:opacity-50"
+  //           >
+  //             Resend code
+  //           </button>
+  //         )}
+  //       </div>
+  //     </form>
+  //   );
+  // }
 
   return (
-    <form onSubmit={handleDetails} noValidate className="mt-8 space-y-5">
+    <form onSubmit={handleSignup} noValidate className="mt-8 space-y-5">
       <div>
         <label htmlFor="full-name" className={labelClass}>
           Full name
@@ -503,7 +506,7 @@ function SignUpForm({
 
       <button type="submit" disabled={busy} className={primaryBtn}>
         {busy ? (
-          <Loader2 className="size-4 animate-spin" />
+          <Loader className="size-4 animate-spin" />
         ) : (
           <>
             Send code <ArrowRight className="size-4" />

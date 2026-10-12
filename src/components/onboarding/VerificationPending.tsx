@@ -18,6 +18,7 @@ import {
   type KybStatus,
   type OrgType,
 } from "../../types/types";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   orgType: OrgType;
@@ -96,6 +97,7 @@ export default function VerificationPending(props: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [status, setStatus] = useState<KybStatus>("in_review");
   const [lastChecked, setLastChecked] = useState<Date | null>(null);
+  const navigate = useNavigate()
 
   // TODO: per-check statuses should come from your API; these mirror what was submitted.
   const uploadedDocs = documentsFor(orgType).filter((s) => kyb.documents[s.id]);
@@ -105,20 +107,20 @@ export default function VerificationPending(props: Props) {
       detail: kyb.documents[s.id]!.name,
       state: "received" as const,
     })),
-    ...(orgType !== "informal"
-      ? [
-          {
-            title: "Directors' identity",
-            detail: `BVN check for ${kyb.directors.length} director${kyb.directors.length > 1 ? "s" : ""}`,
-            state: "checking" as const,
-          },
-          {
-            title: "Settlement bank account",
-            detail: "Name match with your registered organisation",
-            state: "checking" as const,
-          },
-        ]
-      : []),
+    // ...(orgType !== "informal"
+    //   ? [
+    //       {
+    //         title: "Directors' identity",
+    //         detail: `BVN check for ${kyb.directors.length} director${kyb.directors.length > 1 ? "s" : ""}`,
+    //         state: "checking" as const,
+    //       },
+    //       {
+    //         title: "Settlement bank account",
+    //         detail: "Name match with your registered organisation",
+    //         state: "checking" as const,
+    //       },
+    //     ]
+    //   : []),
   ];
 
   const refresh = async () => {
@@ -228,13 +230,13 @@ export default function VerificationPending(props: Props) {
               icon={Users}
               title="Create groups in ledger-only mode"
               text="Add members and log cash now. Records carry over when transfers go live."
-              onClick={props.onCreateGroup}
+              onClick={() => navigate("/groups/new")} 
             />
             <ActionCard
               icon={Mail}
               title="Invite your team"
               text="Admins, finance approvers and officers can accept invites before approval."
-              onClick={props.onInviteTeam}
+              onClick={() => navigate("/members")}
             />
           </div>
         </section>

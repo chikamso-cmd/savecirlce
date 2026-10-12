@@ -5,7 +5,7 @@ import {
   Building2,
   Check,
   Info,
-  Landmark,
+  // Landmark,
   Loader2,
   Users,
 } from "lucide-react";
@@ -25,8 +25,8 @@ interface Props {
 }
 
 const ICONS: Record<OrgType, typeof Building2> = {
-  mfb: Landmark,
-  bank: Landmark,
+  // mfb: Landmark,
+  // bank: Landmark,
   cooperative: Users,
   business: Building2,
   informal: Users,

@@ -1,4 +1,5 @@
-export type OrgType = "mfb" | "bank" | "cooperative" | "business" | "informal";
+// export type OrgType = "mfb" | "bank" | "cooperative" | "business" | "informal";
+export type OrgType = "cooperative" | "business" | "informal";
 export type MoneyMode = "bank" | "gateway" | "ledger";
 export type Provider = "paystack" | "flutterwave";
 export type StepStatus = "done" | "current" | "review" | "upcoming";
@@ -6,9 +7,9 @@ export type KybStatus = "in_review" | "approved" | "action_needed";
 
 // v4 §2.1: MFB/bank → bank-hosted, cooperative/business → gateway-hosted, informal → ledger-only
 export const moneyModeFor = (type: OrgType): MoneyMode =>
-  type === "mfb" || type === "bank"
-    ? "bank"
-    : type === "informal"
+  // type === "mfb" || type === "bank"
+  //   ? "bank"
+    type === "informal"
       ? "ledger"
       : "gateway";
 
@@ -18,16 +19,16 @@ export interface OrgDetails {
 }
 
 export const ORG_TYPES: { value: OrgType; title: string; description: string }[] = [
-  {
-    value: "mfb",
-    title: "Microfinance bank",
-    description: "Run daily or weekly contribution products for your customers.",
-  },
-  {
-    value: "bank",
-    title: "Bank",
-    description: "Run thrift and ajo products at banking scale.",
-  },
+  // {
+  //   value: "mfb",
+  //   title: "Microfinance bank",
+  //   description: "Run daily or weekly contribution products for your customers.",
+  // },
+  // {
+  //   value: "bank",
+  //   title: "Bank",
+  //   description: "Run thrift and ajo products at banking scale.",
+  // },
   {
     value: "cooperative",
     title: "Cooperative society",
@@ -92,34 +93,34 @@ export function documentsFor(type: OrgType): DocSlot[] {
         required: true,
       },
     ],
-    mfb: [
-      {
-        id: "cbn_licence",
-        title: "CBN licence",
-        hint: "Your microfinance bank operating licence",
-        required: true,
-      },
-      {
-        id: "cac",
-        title: "Certificate of Incorporation",
-        hint: "CAC-issued certificate",
-        required: true,
-      },
-    ],
-    bank: [
-      {
-        id: "cbn_licence",
-        title: "CBN licence",
-        hint: "Your banking licence",
-        required: true,
-      },
-      {
-        id: "cac",
-        title: "Certificate of Incorporation",
-        hint: "CAC-issued certificate",
-        required: true,
-      },
-    ],
+    // mfb: [
+    //   {
+    //     id: "cbn_licence",
+    //     title: "CBN licence",
+    //     hint: "Your microfinance bank operating licence",
+    //     required: true,
+    //   },
+    //   {
+    //     id: "cac",
+    //     title: "Certificate of Incorporation",
+    //     hint: "CAC-issued certificate",
+    //     required: true,
+    //   },
+    // ],
+    // bank: [
+    //   {
+    //     id: "cbn_licence",
+    //     title: "CBN licence",
+    //     hint: "Your banking licence",
+    //     required: true,
+    //   },
+    //   {
+    //     id: "cac",
+    //     title: "Certificate of Incorporation",
+    //     hint: "CAC-issued certificate",
+    //     required: true,
+    //   },
+    // ],
     informal: [],
   };
 
@@ -158,12 +159,12 @@ export function documentsFor(type: OrgType): DocSlot[] {
       hint: "Your organisation’s TIN document",
       required: true,
     },
-    {
-      id: "premises",
-      title: "Business premises evidence",
-      hint: "Utility bill or letter of address",
-      required: true,
-    },
+    // {
+    //   id: "premises",
+    //   title: "Business premises evidence",
+    //   hint: "Utility bill or letter of address",
+    //   required: true,
+    // },
     {
       id: "additional",
       title: "Additional documents",
@@ -173,28 +174,28 @@ export function documentsFor(type: OrgType): DocSlot[] {
   ];
 }
 
-export interface Director {
-  id: string;
-  fullName: string;
-  bvn: string;
-}
+// export interface Director {
+//   id: string;
+//   fullName: string;
+//   bvn: string;
+// }
 
-export interface SettlementAccount {
-  bankCode: string;
-  accountNumber: string;
-  accountName: string | null; // set after name enquiry
-}
+// // export interface SettlementAccount {
+// //   bankCode: string;
+// //   accountNumber: string;
+// //   accountName: string | null; // set after name enquiry
+// }
 
 export interface KybData {
   documents: Record<string, File | undefined>;
-  directors: Director[];
-  settlement: SettlementAccount;
+  // directors: Director[];
+  // settlement: SettlementAccount;
 }
 
 export const emptyKyb = (): KybData => ({
   documents: {},
-  directors: [{ id: crypto.randomUUID(), fullName: "", bvn: "" }],
-  settlement: { bankCode: "", accountNumber: "", accountName: null },
+  // directors: [{ id: crypto.randomUUID(), fullName: "", bvn: "" }],
+  // settlement: { bankCode: "", accountNumber: "", accountName: null },
 });
 
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
