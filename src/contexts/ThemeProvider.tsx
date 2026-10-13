@@ -1,25 +1,58 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { ThemeContext, type Theme } from "./ThemeContext";
+import { Monitor, Moon, Sun } from "lucide-react";
+import { useTheme, type ThemePreference } from "../contexts/ThemeContext";
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() =>
-    window.localStorage.getItem("theme") === "dark" ? "dark" : "light",
-  );
+const OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "system", label: "System", icon: Monitor },
+];
 
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
-  };
-
+// Compact icon button for the header: switches between light and dark.
+export function ThemeToggleButton() {
+  const { resolvedTheme, toggleTheme } = useTheme();
+  const dark = resolvedTheme === "dark";
   return (
-    <ThemeContext.Provider
-      value={{ theme, isDarkMode: theme === "dark", setTheme, toggleTheme }}
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      title={dark ? "Light mode" : "Dark mode"}
+      className="rounded-lg p-2.5 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
     >
-      {children}
-    </ThemeContext.Provider>
+      {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
+    </button>
+  );
+}
+
+// Three-way picker (Light / Dark / System) for menus and the Settings page.
+export function ThemeSelector() {
+  const { theme, setTheme } = useTheme();
+  return (
+    <div
+      role="radiogroup"
+      aria-label="Theme"
+      className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800"
+    >
+      {OPTIONS.map(({ value, label, icon: Icon }) => {
+        const on = theme === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            onClick={() => setTheme(value)}
+            className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md px-2 text-sm font-semibold transition ${
+              on
+                ? "bg-white text-emerald-800 shadow-sm dark:bg-slate-700 dark:text-emerald-300"
+                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+            }`}
+          >
+            <Icon className="size-4" aria-hidden="true" />
+            {label}
+          </button>
+        );
+      })}
+    </div>
   );
 }

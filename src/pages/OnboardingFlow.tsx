@@ -12,9 +12,12 @@ import {
   type KybStatus,
   type OrgDetails,
   type StepStatus,
-} from "../types/types";
 
-type Screen = "org" | "kyb" | "pending" | "rails";
+} from "../types/types";
+import SetupStep from "../components/onboarding/Setup";
+import { useNavigate } from "react-router-dom";
+
+type Screen = "org" | "kyb" | "pending" | "rails" | "setup" | "done";
 
 interface Props {
   onGoToDashboard?: () => void;
@@ -62,6 +65,20 @@ const ASIDE: Record<
       "Connect your payment provider so members can pay easily and contributions reconcile automatically.",
     tagline: ["More options.", "More flexibility."],
   },
+  setup: {
+    badge: "Organisation onboarding",
+    title: "Almost there",
+    description:
+      "A few more details to set up your account, your team and first group",
+    tagline: ["Better systems.", "Stronger savings."],
+  },
+  done: {
+    badge: "Organisation onboarding",
+    title: "You're all set",
+    description:
+      "Your organisation is ready. Everything you set here can be changed later in settings.",
+    tagline: ["Save together.", "Grow together."],
+  },
 };
 
 export default function OnboardingFlow({
@@ -75,12 +92,17 @@ export default function OnboardingFlow({
   const [organisationId, setOrganisationId] = useState<string | null>(null);
   const orgType = org.type;
   const [kyb, setKyb] = useState<KybData>(emptyKyb);
+  const [summary, setSummary] = useState<{
+    invites: number;
+    groupName: string | null;
+  } | null>(null);
   const [submission, setSubmission] = useState<{
     reference: string;
     submittedAt: string;
   } | null>(null);
   const [kybStatus, setKybStatus] = useState<KybStatus>("in_review");
   const [toast, setToast] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!toast) return;
@@ -223,8 +245,67 @@ export default function OnboardingFlow({
             onContinue={() => {
               setToast("Payment rails connected.");
               onComplete?.();
+              go("setup");
             }}
           />
+        )}
+
+        {screen === "setup" && (
+          <SetupStep
+            // moneyMode={moneyMode}
+            // kybStatus={kybStatus}
+            onBack={() => go("rails")}
+            onComplete={(s) => {
+              setSummary(s);
+              localStorage.removeItem(DRAFT_KEY);
+              go("done");
+            }}
+          />
+        )}
+
+        {screen === "done" && (
+          <div className="mx-auto max-w-xl py-6 text-center">
+            <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-100">
+              <CheckCircle2
+                className="size-9 text-emerald-700"
+                aria-hidden="true"
+              />
+            </span>
+            <h2 className="mt-5 text-2xl font-extrabold tracking-tight sm:text-3xl dark:text-white">
+              Your organisation is ready
+            </h2>
+            <ul className="mx-auto mt-6 max-w-sm space-y-2 text-left text-sm">
+              <li className="flex gap-2 dark:text-white ">
+                <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />{" "}
+                Policies saved
+              </li>
+              <li className="flex gap-2 dark:text-white">
+                <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />
+                {summary?.invites
+                  ? `${summary.invites} team invite${summary.invites > 1 ? "s" : ""} sent`
+                  : "No team invites yet, add them from Team & roles"}
+              </li>
+              <li className="flex gap-2 dark:text-white">
+                <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />
+                {summary?.groupName
+                  ? `${summary.groupName} created, add members next`
+                  : "No group yet, create one from Groups"}
+              </li>
+              {kybStatus !== "approved" && (
+                <li className="flex gap-2 text-amber-800">
+                  <span aria-hidden="true">⏳</span> Verification still in
+                  review; your account number arrives by SMS once approved
+                </li>
+              )}
+            </ul>
+            <button
+              type="button"
+              onClick={() => navigate("/Dashboard")}
+              className="mt-8 inline-flex min-h-12 items-center justify-center rounded-lg bg-emerald-700 px-8 text-sm font-bold text-white hover:bg-emerald-800"
+            >
+              Go to dashboard
+            </button>
+          </div>
         )}
       </OnboardingLayout>
 

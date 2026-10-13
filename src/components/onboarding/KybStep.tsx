@@ -228,10 +228,10 @@ export default function KybStep({
   return (
     <div className="space-y-10">
       <header>
-        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl dark:text-white text-slate-800">
           Know your organisation (KYB)
         </h2>
-        <p className="mt-2 max-w-2xl text-base leading-relaxed text-slate-600">
+        <p className="mt-2 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-white">
           Upload your documents and tell us about your directors and settlement
           account. This helps us verify your organisation and keep the platform
           secure.
@@ -257,10 +257,10 @@ export default function KybStep({
       )}
 
       <section aria-labelledby="docs-heading">
-        <h3 id="docs-heading" className="text-lg font-bold text-emerald-800">
+        <h3 id="docs-heading" className="text-lg font-bold text-emerald-800 dark:text-emerald-600">
           Organisation documents
         </h3>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-white">
           Clear, valid copies. PDF, JPG or PNG.
         </p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

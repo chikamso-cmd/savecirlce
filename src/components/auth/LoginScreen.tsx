@@ -15,7 +15,7 @@ import {
   Moon,
   Loader,
 } from "lucide-react";
-import { useTheme } from "../../contexts/useTheme";
+// import { useTheme } from "../../contexts/useTheme";
 import loginImage from "../../assets/images/login.jpg";
 import {
   // sendSignupOtp,
@@ -27,12 +27,13 @@ import {
 import { preloadGoogle, requestGoogleCode } from "../../services/googleAuth";
 import { api, tokenStore } from "../../services/Axios";
 import { toast } from "react-toastify";
+import { ThemeToggleButton } from "../../contexts/ThemeProvider";
 
 const SESSION_KEY = "savecircle:session";
 
 const fieldClass =
   "h-11 w-full rounded-lg border border-[#dce5eb] pl-10 pr-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15";
-const labelClass = "mb-2 block text-xs font-semibold text-[#24445b]";
+const labelClass = "mb-2 block text-xs font-semibold text-[#61778a] dark:text-white";
 const primaryBtn =
   "mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#07835e] text-sm font-bold text-white transition-colors hover:bg-[#066c4f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087f5b] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
 
@@ -113,7 +114,7 @@ function GoogleButton({ mode }: { mode: "login" | "signup" }) {
         type="button"
         onClick={handleClick}
         disabled={busy}
-        className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#dce5eb] text-sm font-semibold text-[#24445b] transition-colors hover:bg-[#f7faf9] disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#dce5eb] text-sm font-semibold  transition-colors hover:bg-[#f7faf944] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
       >
         {busy ? (
           <Loader2 className="size-4 animate-spin" />
@@ -164,7 +165,7 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-5">
       {error && (
-        <p className="bg-red-50 text-green-800 p-3 border-l-2 border-red-700 rounded-xs text-[14px]">
+        <p className="bg-red-50 text-red-800 p-3 border-l-2 border-red-700 rounded-xs text-[14px]">
           {error}
         </p>
       )}
@@ -185,7 +186,7 @@ function LoginForm() {
             value={phoneInput}
             onChange={(e) => setPhoneInput(e.target.value)}
             placeholder="0803 123 4567"
-            className="h-11 w-full rounded-r-lg border border-[#dce5eb] px-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15"
+            className="h-11 w-full rounded-r-lg border border-[#dce5eb] px-3.5 text-sm outline-none focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15"
           />
         </div>
       </div>
@@ -221,12 +222,12 @@ function LoginForm() {
         </div> */}
       {/* </div> */}
       <div className="flex items-center justify-between gap-3 text-xs">
-        <label className="flex items-center gap-2 text-[#24445b]">
+        <label className="flex items-center gap-2 ">
           <input
             type="checkbox"
             checked={rememberMe}
             onChange={(event) => setRememberMe(event.target.checked)}
-            className="size-4 rounded border-[#9aafbd] accent-[#087f5b]"
+            className="size-4 rounded border-[#9aafbd] accent-[#087f5b] text-[#61778a]"
           />
           Remember me
         </label>
@@ -443,7 +444,7 @@ function SignUpForm({
           Full name
         </label>
         <div className="relative">
-          <UserRound className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#557188]" />
+          <UserRound className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 " />
           <input
             id="full-name"
             name="name"
@@ -474,13 +475,13 @@ function SignUpForm({
             value={phoneInput}
             onChange={(e) => setPhoneInput(e.target.value)}
             placeholder="0803 123 4567"
-            className="h-11 w-full rounded-r-lg border border-[#dce5eb] px-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15"
+            className="h-11 w-full rounded-r-lg border border-[#dce5eb] px-3.5 text-sm  outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15"
           />
         </div>
         {attempted && errors.phone ? (
           <ErrorText>{errors.phone}</ErrorText>
         ) : (
-          <p className="mt-2 text-xs text-[#61778a]">
+          <p className="mt-2 text-xs text-[#61778a] dark:text-white">
             We'll text you a 6-digit code to confirm it's you.
           </p>
         )}
@@ -494,7 +495,7 @@ function SignUpForm({
             onChange={(event) => setAgreed(event.target.checked)}
             className="size-4 rounded border-[#9aafbd] accent-[#087f5b]"
           />
-          <span>
+          <span className="dark:text-white">
             I agree to the{" "}
             <a
               href="#terms"
@@ -536,13 +537,13 @@ interface AuthFormProps {
 }
 const AuthForm = ({ mode }: AuthFormProps) => {
   const isSignup = mode === "signup";
-  const { isDarkMode, toggleTheme } = useTheme();
+  // const { isDarkMode, toggleTheme } = useTheme();
   const [signupStage, setSignupStage] = useState<"details" | "otp">("details");
   const onOtp = isSignup && signupStage === "otp";
 
   return (
-    <main className="auth-page min-h-screen bg-[#e9f4f0] p-0 md:p-4 lg:p-6 flex items-center justify-center">
-      <section className="auth-frame w-full max-w-[1400px] min-h-screen md:min-h-[min(820px,calc(100vh-2rem))] overflow-hidden bg-white md:rounded-xl md:shadow-[0_24px_70px_rgba(10,61,49,0.14)] grid md:grid-cols-2">
+    <main className="auth-page min-h-screen bg-[#e9f4f0] dark:bg-slate-900 p-0 md:p-4 lg:p-6 flex items-center justify-center">
+      <section className="auth-frame w-full max-w-[1400px] min-h-screen md:min-h-[min(820px,calc(100vh-2rem))] overflow-hidden bg-white md:rounded-xl md:shadow-[0_24px_70px_rgba(10,61,49,0.14)] grid md:grid-cols-2 dark:bg-emerald-900 dark:text-white">
         <aside className="relative hidden md:flex flex-col overflow-hidden bg-[#064d3d] px-10 py-10 lg:px-14 lg:py-12 text-white">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_88%_35%,rgba(16,144,101,0.45),transparent_40%),linear-gradient(145deg,#064d3d_0%,#053c33_72%,#07392f_100%)]" />
           <div className="relative z-10 flex items-center gap-3">
@@ -591,29 +592,17 @@ const AuthForm = ({ mode }: AuthFormProps) => {
           <div className="flex justify-between items-center text-xs sm:text-sm text-[#61778a]">
             {/* dark mode toggler button */}
             <div>
-              <button
-                type="button"
-                onClick={toggleTheme}
-                aria-label={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
-                title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
-                className="mr-4 rounded-full p-2 text-[#615d5d] transition-colors hover:bg-[#103b4a]"
-              >
-                {isDarkMode ? (
-                  <Sun className="size-4" />
-                ) : (
-                  <Moon className="size-4" />
-                )}
-              </button>
+              <ThemeToggleButton />
             </div>
             <div>
-              <span>
+              <span className="dark:text-white">
                 {isSignup
                   ? "Already have an account?"
                   : "Don't have an account?"}
               </span>
               <Link
                 to={isSignup ? "/login" : "/signup"}
-                className="ml-2 inline-flex items-center gap-1 font-bold text-[#087f5b] hover:text-[#056b4d]"
+                className="ml-2 inline-flex items-center gap-1 font-bold text-[#087f5b] dark:text-white hover:text-[#12f5b1]"
               >
                 {isSignup ? "Log in" : "Sign up"}{" "}
                 <ArrowRight className="size-4" />
@@ -622,14 +611,14 @@ const AuthForm = ({ mode }: AuthFormProps) => {
           </div>
 
           <div className="m-auto w-full max-w-[440px] py-10">
-            <h2 className="text-[30px] sm:text-[34px] font-bold leading-tight tracking-tight text-[#103b4a]">
+            <h2 className="text-[30px] sm:text-[34px] font-bold leading-tight tracking-tight text-[#103b4a] dark:text-white">
               {onOtp
                 ? "Check your phone"
                 : isSignup
                   ? "Create your account"
                   : "Welcome Back"}
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[#61778a]">
+            <p className="mt-2 text-sm leading-relaxed text-[#61778a] dark:text-white">
               {onOtp
                 ? "Enter the 6-digit code we just sent you by SMS."
                 : isSignup
@@ -644,7 +633,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             )}
           </div>
 
-          <p className="mx-auto max-w-sm text-center text-[10px] leading-relaxed text-[#72869a]">
+          <p className="mx-auto max-w-sm text-center text-[10px] leading-relaxed text-[#72869a] dark:text-white">
             By continuing, you agree to our{" "}
             <a
               href="#terms"

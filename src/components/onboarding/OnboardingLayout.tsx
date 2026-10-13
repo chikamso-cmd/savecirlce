@@ -1,16 +1,16 @@
 import type { ReactNode } from "react";
-import { Check, Clock, History, Landmark, Moon, Sun } from "lucide-react";
+import { Check, Clock, History, Landmark } from "lucide-react";
 import type { StepStatus } from "../../types/types";
-import { useTheme } from "../../contexts/useTheme";
+import { ThemeToggleButton } from "../../contexts/ThemeProvider"; 
 
 export const btnPrimary =
   "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-6 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300";
 export const btnSecondary =
   "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border-[1.5px] border-emerald-700 bg-white px-5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-50";
 export const btnGhost =
-  "inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700";
+  "inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 dark:text-emerald-500";
 export const inputBase =
-  "w-full min-h-12 rounded-lg border border-slate-300 bg-white px-4 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20";
+  "w-full min-h-12 rounded-lg border border-slate-300 bg-white px-4 text-[15px] text-slate-900 placeholder:text-slate-400 dark:placeholder:text-white focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 dark:bg-slate-900 dark:text-white";
 
 const STEP_LABELS = [
   "Organisation",
@@ -40,7 +40,7 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
           return (
             <li
               key={label}
-              className="flex flex-col items-center gap-2"
+              className="flex flex-col items-center gap-2 "
               aria-current={s === "current" ? "step" : undefined}
             >
               <div className="flex w-full items-center">
@@ -54,7 +54,7 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
                       : s === "review"
                         ? "border-2 border-amber-500 bg-amber-50 text-amber-700"
                         : s === "current"
-                          ? "border-2 border-emerald-700 bg-white text-emerald-700"
+                          ? "border-2 border-emerald-700 bg-white text-emerald-700 "
                           : "border-2 border-slate-200 bg-white text-slate-500"
                   }`}
                 >
@@ -75,8 +75,8 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
                   s === "review"
                     ? "font-semibold text-amber-800"
                     : s === "upcoming"
-                      ? "text-slate-500"
-                      : "font-medium text-emerald-700"
+                      ? "text-slate-500 dark:text-white"
+                      : "font-medium text-emerald-700 dark:text-emerald-600"
                 } ${s === "current" ? "font-bold" : ""}`}
               >
                 {label}
@@ -95,7 +95,11 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
 function Logo() {
   return (
     <div className="flex items-center gap-3">
-      <img src="/src/assets/images/logo.png" alt="sacevircle logo" width={230} />
+      <img
+        src="/src/assets/images/logo.png"
+        alt="sacevircle logo"
+        width={230}
+      />
     </div>
   );
 }
@@ -121,17 +125,17 @@ export default function OnboardingLayout({
   illustrationSrc,
   children,
 }: LayoutProps) {
-  const { isDarkMode, toggleTheme } = useTheme();
+  // const { isDarkMode, toggleTheme } = useTheme();
   return (
-    <div className="min-h-screen bg-white text-slate-900 lg:grid lg:grid-cols-[minmax(340px,420px)_1fr]">
-      <aside className="relative overflow-hidden bg-emerald-50 px-5 pb-6 pt-5 sm:px-8 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:px-12 lg:pt-12">
+    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 lg:grid lg:grid-cols-[minmax(340px,420px)_1fr]">
+      <aside className="relative overflow-hidden bg-emerald-50 px-5 pb-6 pt-5  sm:px-8 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:px-12 lg:pt-12">
         <Logo />
         <div className="mt-6 lg:mt-14">
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3.5 py-1.5 text-sm font-semibold text-emerald-800">
             <Landmark className="size-4" aria-hidden="true" />
             {badge}
           </span>
-          <h1 className="mt-4 text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl lg:text-[42px]">
+          <h1 className="mt-4 text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl lg:text-[42px] ">
             {title}
           </h1>
           <p className="mt-3 hidden max-w-sm text-base leading-relaxed text-slate-600 sm:block lg:text-[17px]">
@@ -157,29 +161,18 @@ export default function OnboardingLayout({
         </div>
       </aside>
 
-      <main className="mx-auto w-full max-w-5xl px-5 pb-10 pt-4 sm:px-8 lg:px-14 lg:pt-8">
+      <main className="mx-auto w-full max-w-5xl px-5 pb-10 pt-4 sm:px-8 lg:px-14 lg:pt-8 dark:bg-slate-900">
+        
         <div className="flex items-center justify-between">
           {/* dark mode toggler button */}
           <div>
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
-              title={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
-              className="mr-4 rounded-full p-2 text-[#615d5d] transition-colors hover:bg-[#103b4a]"
-            >
-              {isDarkMode ? (
-                <Sun className="size-4" />
-              ) : (
-                <Moon className="size-4" />
-              )}
-            </button>
+           <ThemeToggleButton />
           </div>
-          <div className="mb-4 flex justify-end lg:mb-8">
+          <div className="mb-4 flex justify-end lg:mb-8 dark:text-white">
             <button
               type="button"
               onClick={onSaveLater}
-              className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-slate-600 hover:text-emerald-700"
+              className="inline-flex min-h-11 items-center gap-2 text-sm font-medium  hover:text-emerald-700"
             >
               <History className="size-4" aria-hidden="true" />
               Save and continue later

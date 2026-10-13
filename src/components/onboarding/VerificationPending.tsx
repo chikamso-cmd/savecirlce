@@ -143,10 +143,10 @@ export default function VerificationPending(props: Props) {
   return (
     <div className="space-y-8">
       <header>
-        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+        <h2 className="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight sm:text-3xl">
           Verification in progress
         </h2>
-        <p className="mt-2 max-w-2xl text-base leading-relaxed text-slate-600">
+        <p className="mt-2 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-white">
           We've received your documents. We'll send you an SMS and email when
           the review is done, or if anything needs fixing.
         </p>
