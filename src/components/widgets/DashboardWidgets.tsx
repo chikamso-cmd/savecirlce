@@ -272,8 +272,13 @@ export function RecentPayments() {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {payments.map((p) => (
-              <tr key={p.id} className="hover:bg-slate-50">
-                <td className="py-3.5 pr-3 text-slate-500">{p.time}</td>
+              <tr
+                key={p.id}
+                className="hover:bg-slate-50 dark:hover:bg-slate-600"
+              >
+                <td className="py-3.5 pr-3 text-slate-500 dark:text-white">
+                  {p.time}
+                </td>
                 <td className="px-3 py-3.5 font-semibold">
                   <Link
                     to={`/payments/${p.id}`}
@@ -282,8 +287,12 @@ export function RecentPayments() {
                     {p.member}
                   </Link>
                 </td>
-                <td className="px-3 py-3.5 text-slate-600">{p.group}</td>
-                <td className="px-3 py-3.5 text-slate-600">{p.channel}</td>
+                <td className="px-3 py-3.5 text-slate-600 dark:text-white">
+                  {p.group}
+                </td>
+                <td className="px-3 py-3.5 text-slate-600 dark:text-white">
+                  {p.channel}
+                </td>
                 <td className="px-3 py-3.5">
                   <Pill tone={p.tone}>{p.status}</Pill>
                 </td>
@@ -315,12 +324,12 @@ export function NeedsAttention() {
               {a.count}
             </span>
             <div className="min-w-0 flex-1 basis-48">
-              <p className="text-sm font-bold text-slate-900">{a.title}</p>
-              <p className="text-xs text-slate-500 sm:text-sm">{a.detail}</p>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">{a.title}</p>
+              <p className="text-xs text-slate-500 sm:text-sm dark:text-white">{a.detail}</p>
             </div>
             <Link
               to={a.href}
-              className="ml-14 inline-flex min-h-10 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-800 hover:border-emerald-600 hover:text-emerald-700 sm:ml-0"
+              className="ml-14 inline-flex min-h-10 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-800 dark:text-white hover:border-emerald-600 hover:text-emerald-700 sm:ml-0"
             >
               {a.action}
             </Link>

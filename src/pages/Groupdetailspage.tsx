@@ -187,9 +187,9 @@ const STATUS_PILL: Record<
 const btnPrimary =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50";
 const btnOutline =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:border-emerald-600 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:border-emerald-600 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-900 dark:text-white";
 const inputCls =
-  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20";
+  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 dark:bg-slate-900";
 
 function GroupDetails({ id }: { id?: string }) {
   const [group, setGroup] = useState<Group | null>(null);
@@ -470,7 +470,7 @@ function GroupDetails({ id }: { id?: string }) {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {rotating ? (
           <>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4">
               <p className="text-xs font-semibold text-slate-600 sm:text-sm">
                 Cycle
               </p>
@@ -478,14 +478,14 @@ function GroupDetails({ id }: { id?: string }) {
                 {currentSlot} of {group.cycles}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
               <p className="text-xs font-semibold text-slate-600 sm:text-sm">
                 Collected this cycle
               </p>
               <p className="mt-1 text-2xl font-extrabold">
                 {naira(cycleTotals.collected)}
               </p>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900">
                 <div
                   className="h-full rounded-full bg-emerald-600"
                   style={{
@@ -497,7 +497,7 @@ function GroupDetails({ id }: { id?: string }) {
                 of {naira(cycleTotals.due)}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
               <p className="text-xs font-semibold text-slate-600 sm:text-sm">
                 Next payout
               </p>
@@ -519,7 +519,7 @@ function GroupDetails({ id }: { id?: string }) {
                 {naira(totalSavings)}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4">
               <p className="text-xs font-semibold text-slate-600 sm:text-sm">
                 Withdrawal notice
               </p>
@@ -527,7 +527,7 @@ function GroupDetails({ id }: { id?: string }) {
                 {group.noticePeriod ?? "Org default"}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4">
               <p className="text-xs font-semibold text-slate-600 sm:text-sm">
                 Pending withdrawals
               </p>
@@ -535,7 +535,7 @@ function GroupDetails({ id }: { id?: string }) {
             </div>
           </>
         )}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4">
           <p className="text-xs font-semibold text-slate-600 sm:text-sm">
             Members
           </p>
@@ -618,14 +618,14 @@ function GroupDetails({ id }: { id?: string }) {
         </section>
       )}
       {payout === "submitting" && (
-        <p className="flex items-center gap-2 rounded-2xl bg-slate-100 p-4 text-sm">
+        <p className="flex items-center gap-2 rounded-2xl bg-slate-100 dark:bg-slate-900 p-4 text-sm">
           <Loader2 className="size-4 animate-spin" /> Creating payout…
         </p>
       )}
 
       {/* Record cash panel */}
       {cashOpen && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-5">
+        <section className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5">
           <div className="flex items-center justify-between">
             <h2 className="font-bold">Record cash</h2>
             <button
@@ -695,7 +695,7 @@ function GroupDetails({ id }: { id?: string }) {
               role="tab"
               aria-selected={tab === t.id}
               onClick={() => setTab(t.id)}
-              className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-semibold transition ${tab === t.id ? "border-emerald-700 text-emerald-800" : "border-transparent text-slate-600 hover:text-slate-900"}`}
+              className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-semibold transition ${tab === t.id ? "border-emerald-700 text-emerald-800" : "border-transparent text-slate-600 hover:text-slate-900 dark:hover:text-white"}`}
             >
               {t.label}
             </button>
@@ -705,7 +705,7 @@ function GroupDetails({ id }: { id?: string }) {
 
       {tab === "members" && (
         <section className="space-y-4">
-          <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-slate-500 focus-within:border-emerald-600 sm:max-w-sm">
+          <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 dark:text-white px-3 text-slate-500 focus-within:border-emerald-600 sm:max-w-sm">
             <Search className="size-4 shrink-0" aria-hidden="true" />
             <span className="sr-only">Search members</span>
             <input
@@ -713,10 +713,10 @@ function GroupDetails({ id }: { id?: string }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name or phone"
-              className="w-full bg-transparent text-sm text-slate-900 focus:outline-none"
+              className="w-full bg-transparent text-sm text-slate-900 focus:outline-none dark:text-white"
             />
           </label>
-          <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white">
+          <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 ">
             {visibleMembers.map((m) => {
               const st = statusOf(m.paidThisCycle, group.amount);
               return (
@@ -767,7 +767,7 @@ function GroupDetails({ id }: { id?: string }) {
       )}
 
       {tab === "rotation" && rotating && (
-        <section className="rounded-2xl border border-slate-200 bg-white">
+        <section className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900">
           <ol className="divide-y divide-slate-100">
             {Array.from({ length: group.cycles ?? 0 }, (_, i) => {
               const slot = i + 1;
@@ -810,7 +810,7 @@ function GroupDetails({ id }: { id?: string }) {
       )}
 
       {tab === "withdrawals" && !rotating && (
-        <section className="rounded-2xl border border-slate-200 bg-white">
+        <section className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900">
           <ul className="divide-y divide-slate-100">
             {[
               {
@@ -854,7 +854,7 @@ function GroupDetails({ id }: { id?: string }) {
       )}
 
       {tab === "activity" && (
-        <section className="rounded-2xl border border-slate-200 bg-white">
+        <section className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900">
           <ul className="divide-y divide-slate-100">
             {activity.map((a) => (
               <li

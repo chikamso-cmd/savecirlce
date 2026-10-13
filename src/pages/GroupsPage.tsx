@@ -18,10 +18,10 @@ function GroupCard({ group: g }: { group: Group }) {
   return (
     <Link
       to={`/groups/${g.id}`}
-      className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700"
+      className="flex flex-col rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 transition hover:border-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700"
     >
       <div className="flex items-start justify-between gap-3">
-        <h2 className="text-base font-bold text-slate-900">{g.name}</h2>
+        <h2 className="text-base font-bold text-slate-900 dark:text-white">{g.name}</h2>
         <Pill tone={rotating ? "info" : "neutral"}>
           {rotating ? "Rotating" : "Thrift"}
         </Pill>
@@ -121,7 +121,7 @@ export default function GroupsPage() {
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
             Groups
           </h1>
-          <p className="mt-1 text-sm text-slate-600 sm:text-base">
+          <p className="mt-1 text-sm text-slate-600 sm:text-base ">
             {groups.length} groups, {totalMembers} members
           </p>
         </div>
@@ -166,14 +166,14 @@ export default function GroupsPage() {
               className={`min-h-10 rounded-full border px-4 text-sm font-semibold transition ${
                 filter === f.id
                   ? "border-emerald-700 bg-emerald-50 text-emerald-800"
-                  : "border-slate-300 bg-white text-slate-700 hover:border-emerald-600"
+                  : "border-slate-300 bg-white dark:bg-slate-900 dark:text-white text-slate-700 hover:border-emerald-600"
               }`}
             >
               {f.label}
             </button>
           ))}
         </div>
-        <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-slate-500 focus-within:border-emerald-600 md:w-72">
+        <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-slate-500 dark:bg-slate-900 dark:text-white focus-within:border-emerald-600 md:w-72">
           <Search className="size-4 shrink-0" aria-hidden="true" />
           <span className="sr-only">Search groups</span>
           <input
@@ -181,7 +181,7 @@ export default function GroupsPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search groups"
-            className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+            className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white"
           />
         </label>
       </div>
@@ -193,7 +193,7 @@ export default function GroupsPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300  dark:bg-slate-900 dark:text-white bg-white p-10 text-center">
           <p className="font-semibold">No groups match</p>
           <p className="mt-1 text-sm text-slate-500">
             Try another filter or search term.

@@ -37,7 +37,7 @@ const PHONE_RE = /^(\+?234|0)\d{10}$/;
 const normalisePhone = (p: string) => p.replace(/[\s-]/g, "");
 
 const inputCls =
-  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 aria-[invalid=true]:border-red-400";
+  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 aria-[invalid=true]:border-red-400 dark:bg-slate-900 dark:text-white";
 const btnPrimary =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-5 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60";
 const btnOutline =
@@ -225,7 +225,7 @@ export default function AddMemberModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-member-title"
-        className="flex max-h-[92vh] w-full flex-col rounded-t-2xl bg-white shadow-xl sm:max-w-xl sm:rounded-2xl"
+        className="flex max-h-[92vh] w-full flex-col rounded-t-2xl bg-white shadow-xl sm:max-w-xl sm:rounded-2xl dark:bg-slate-900"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-3 border-b border-slate-200 p-5 sm:px-6">
@@ -267,7 +267,7 @@ export default function AddMemberModal({
                 role="tab"
                 aria-selected={mode === m}
                 onClick={() => setMode(m)}
-                className={`min-h-10 rounded-md text-sm font-semibold transition ${mode === m ? "bg-white text-emerald-800 shadow-sm" : "text-slate-600 hover:text-slate-900"}`}
+                className={`min-h-10 rounded-md text-sm font-semibold transition ${mode === m ? "bg-white text-emerald-800 shadow-sm dark:bg-slate-900" : "text-slate-600 dark:bg-slate-900 dark:text-white"}`}
               >
                 {label}
               </button>

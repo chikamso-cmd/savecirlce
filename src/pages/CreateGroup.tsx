@@ -20,7 +20,7 @@ import {
 } from "../lib/GroupStore";
 
 const input =
-  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 aria-[invalid=true]:border-red-400";
+  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 aria-[invalid=true]:border-red-400 dark:bg-slate-900 dark:placeholder:text-white dark:text-white";
 
 type Errors = Partial<
   Record<
@@ -34,8 +34,10 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-      <h2 className="text-base font-bold text-slate-900">{title}</h2>
+    <section className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:text-white p-5 sm:p-6">
+      <h2 className="text-base font-bold text-slate-900 dark:text-white">
+        {title}
+      </h2>
       <div className="mt-4 space-y-4">{children}</div>
     </section>
   );
@@ -56,7 +58,7 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="mb-1.5 block text-sm font-medium text-slate-700"
+        className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white "
       >
         {label}
       </label>
@@ -234,7 +236,7 @@ export default function CreateGroupPage() {
 
       <Section title="Group details">
         <fieldset>
-          <legend className="mb-2 text-sm font-medium text-slate-700">
+          <legend className="mb-2 text-sm font-medium text-slate-700 dark:text-white">
             Group type
           </legend>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -266,7 +268,9 @@ export default function CreateGroupPage() {
                 />
                 <span>
                   <span className="block text-sm font-bold">{title}</span>
-                  <span className="block text-sm text-slate-600">{hint}</span>
+                  <span className="block text-sm text-slate-600 dark:text-white">
+                    {hint}
+                  </span>
                 </span>
               </label>
             ))}

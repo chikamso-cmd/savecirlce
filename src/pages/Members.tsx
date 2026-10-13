@@ -138,7 +138,7 @@ const initials = (name: string) =>
     .toUpperCase();
 
 const inputCls =
-  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20";
+  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 dark:bg-slate-900";
 const btnPrimary =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-5 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-60";
 const btnOutline =
@@ -697,7 +697,7 @@ export default function MembersPage() {
             key={s.label}
             type="button"
             onClick={s.onClick}
-            className="rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-emerald-600"
+            className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4 text-left transition hover:border-emerald-600"
           >
             <span className="block text-xs font-semibold text-slate-600 sm:text-sm">
               {s.label}
@@ -723,14 +723,14 @@ export default function MembersPage() {
               type="button"
               onClick={() => setFilter(f.id)}
               aria-pressed={filter === f.id}
-              className={`min-h-10 rounded-full border px-4 text-sm font-semibold ${filter === f.id ? "border-emerald-700 bg-emerald-50 text-emerald-800" : "border-slate-300 bg-white text-slate-700 hover:border-emerald-600"}`}
+              className={`min-h-10 rounded-full border px-4 text-sm font-semibold ${filter === f.id ? "border-emerald-700 bg-emerald-50 text-emerald-800 dark:bg-slate-600 dark:text-white" : "border-slate-300 bg-white dark:bg-slate-900 dark:text-white text-slate-700 hover:border-emerald-600"}`}
             >
               {f.label}
             </button>
           ))}
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <label className="flex h-11 flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-slate-500 focus-within:border-emerald-600">
+          <label className="flex h-11 flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 px-3 text-slate-500 focus-within:border-emerald-600">
             <Search className="size-4 shrink-0" aria-hidden="true" />
             <span className="sr-only">Search members</span>
             <input
@@ -738,7 +738,7 @@ export default function MembersPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name, phone or account number"
-              className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+              className="w-full bg-transparent text-sm text-slate-900  dark:text-white placeholder:text-slate-400 focus:outline-none"
             />
           </label>
           <select
@@ -756,7 +756,7 @@ export default function MembersPage() {
       </div>
 
       {visible.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:bg-slate-900">
           <p className="font-semibold">No members match</p>
           <button
             type="button"
@@ -779,7 +779,7 @@ export default function MembersPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedId(m.id)}
-                  className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-emerald-600"
+                  className="w-full rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4 text-left hover:border-emerald-600"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -810,10 +810,10 @@ export default function MembersPage() {
           </ul>
 
           {/* Tablet and up: table */}
-          <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white md:block">
+          <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 md:block">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs text-slate-500">
-                <tr>
+              <thead className="bg-slate-50 text-left text-xs text-slate-500 dark:bg-slate-800">
+                <tr className="dark:text-white">
                   <th className="px-5 py-3 font-semibold">Member</th>
                   <th className="px-4 py-3 font-semibold">Groups</th>
                   <th className="px-4 py-3 font-semibold">Identity</th>
@@ -831,7 +831,7 @@ export default function MembersPage() {
                   <tr
                     key={m.id}
                     onClick={() => setSelectedId(m.id)}
-                    className={`cursor-pointer hover:bg-slate-50 ${m.active ? "" : "text-slate-400"}`}
+                    className={`cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600 ${m.active ? "" : "text-slate-400"}`}
                   >
                     <td className="px-5 py-3.5">
                       <button
@@ -846,17 +846,17 @@ export default function MembersPage() {
                           {initials(m.name)}
                         </span>
                         <span>
-                          <span className="block font-semibold text-slate-900 hover:text-emerald-700">
+                          <span className="block font-semibold text-slate-900 hover:text-emerald-700 dark:text-white">
                             {m.name}
                           </span>
-                          <span className="block text-xs text-slate-500">
+                          <span className="block text-xs text-slate-500 dark:text-white">
                             {m.phone}
                             {!m.active && ", inactive"}
                           </span>
                         </span>
                       </button>
                     </td>
-                    <td className="max-w-56 truncate px-4 py-3.5 text-slate-600">
+                    <td className="max-w-56 truncate px-4 py-3.5 text-slate-600 dark:text-white">
                       {m.groups.join(", ")}
                     </td>
                     <td className="px-4 py-3.5">
