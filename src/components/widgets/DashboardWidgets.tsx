@@ -25,7 +25,7 @@ export function Card({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 dark:bg-slate-900 ${className}`}
+      className={`rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 dark:bg-slate-900  ${className}`}
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-base font-bold text-slate-900 dark:text-white">{title}</h2>
@@ -233,7 +233,7 @@ export function WithdrawalsDue() {
 
 export function RecentPayments() {
   return (
-    <Card
+    <Card className="bg-slate-300"
       title="Recent payments"
       action={<ViewAll href="/payments" label="View all payments" />}
     >
@@ -261,7 +261,7 @@ export function RecentPayments() {
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs text-slate-500 dark:text-white">
+            <tr className="text-left text-xs text-slate-500 dark:text-white ">
               <th className="py-2.5 pr-3 font-semibold">Time</th>
               <th className="px-3 py-2.5 font-semibold">Member</th>
               <th className="px-3 py-2.5 font-semibold">Group</th>

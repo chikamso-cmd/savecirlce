@@ -146,7 +146,7 @@ export default function PaymentsPage() {
             type="button"
             onClick={load}
             disabled={loading}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold hover:border-emerald-600 disabled:opacity-60"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold hover:border-emerald-600 disabled:opacity-60 dark:bg-slate-900"
           >
             <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} />{" "}
             Refresh
@@ -155,7 +155,7 @@ export default function PaymentsPage() {
             type="button"
             onClick={exportCsv}
             disabled={!visible.length}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border-[1.5px] border-emerald-700 bg-white px-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border-[1.5px] border-emerald-700 bg-white px-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-600 "
           >
             <Download className="size-4" /> Export CSV
           </button>
@@ -163,7 +163,7 @@ export default function PaymentsPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
           <p className="text-xs font-semibold text-slate-600 sm:text-sm">
             Collected
           </p>
@@ -171,7 +171,7 @@ export default function PaymentsPage() {
             {naira(totals.total)}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
           <p className="text-xs font-semibold text-slate-600 sm:text-sm">
             By transfer
           </p>
@@ -180,7 +180,7 @@ export default function PaymentsPage() {
           </p>
           <p className="text-xs text-slate-500">{naira(totals.transfer)}</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
           <p className="text-xs font-semibold text-slate-600 sm:text-sm">
             Cash
           </p>
@@ -191,7 +191,7 @@ export default function PaymentsPage() {
         <button
           type="button"
           onClick={() => setFilter("unmatched")}
-          className="rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-emerald-600"
+          className="rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-emerald-600 dark:bg-slate-900"
         >
           <span className="block text-xs font-semibold text-slate-600 sm:text-sm">
             Unmatched
@@ -220,14 +220,14 @@ export default function PaymentsPage() {
                 type="button"
                 onClick={() => setFilter(f.id)}
                 aria-pressed={filter === f.id}
-                className={`min-h-10 rounded-full border px-4 text-sm font-semibold ${filter === f.id ? "border-emerald-700 bg-emerald-50 text-emerald-800" : "border-slate-300 bg-white text-slate-700 hover:border-emerald-600"}`}
+                className={`min-h-10 rounded-full border px-4 text-sm font-semibold ${filter === f.id ? "border-emerald-700 bg-emerald-50 text-emerald-800" : "border-slate-300 bg-white text-slate-700 hover:border-emerald-600 dark:bg-slate-900 dark:text-white cursor-pointer"}`}
               >
                 {f.label}
               </button>
             ))}
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <label className="flex h-11 flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-slate-500 focus-within:border-emerald-600 lg:w-80 lg:flex-none">
+            <label className="flex h-11 flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 px-3 text-slate-500 dark:text-white focus-within:border-emerald-600 lg:w-80 lg:flex-none ">
               <Search className="size-4 shrink-0" aria-hidden="true" />
               <span className="sr-only">Search payments</span>
               <input
@@ -235,14 +235,14 @@ export default function PaymentsPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Member, sender, narration or reference"
-                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white"
               />
             </label>
             <select
               value={range}
               onChange={(e) => setRange(e.target.value as Range)}
               aria-label="Date range"
-              className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold focus:border-emerald-600 focus:outline-none"
+              className="h-11 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 px-3 text-sm font-semibold focus:border-emerald-600 focus:outline-none"
             >
               <option value="today">Today</option>
               <option value="7d">Last 7 days</option>
@@ -266,7 +266,7 @@ export default function PaymentsPage() {
           ))}
         </div>
       ) : visible.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:bg-slate-900">
           <p className="font-semibold">No payments match</p>
           <p className="mt-1 text-sm text-slate-500">
             Try a longer date range or another filter.
@@ -290,7 +290,7 @@ export default function PaymentsPage() {
               <li key={p.id}>
                 <Link
                   to={`/payments/${p.id}`}
-                  className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 hover:border-emerald-600"
+                  className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:bg-slate-900 bg-white p-4 hover:border-emerald-600"
                 >
                   <span
                     className={`flex size-9 shrink-0 items-center justify-center rounded-full ${p.channel === "cash" ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}
@@ -329,9 +329,9 @@ export default function PaymentsPage() {
             ))}
           </ul>
 
-          <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white md:block">
+          <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white md:block dark:bg-slate-900">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs text-slate-500">
+              <thead className="bg-slate-50 text-left text-xs text-slate-500 dark:bg-slate-600 dark:text-white">
                 <tr>
                   <th className="px-5 py-3 font-semibold">Received</th>
                   <th className="px-4 py-3 font-semibold">Member / sender</th>
@@ -346,9 +346,9 @@ export default function PaymentsPage() {
                   <tr
                     key={p.id}
                     onClick={() => navigate(`/payments/${p.id}`)}
-                    className="cursor-pointer hover:bg-slate-50"
+                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600"
                   >
-                    <td className="whitespace-nowrap px-5 py-3.5 text-slate-500">
+                    <td className="whitespace-nowrap px-5 py-3.5 text-slate-500 dark:text-white">
                       {formatWhen(p.receivedAt)}
                     </td>
                     <td className="px-4 py-3.5">
@@ -360,17 +360,17 @@ export default function PaymentsPage() {
                         {p.member ?? "Unknown sender"}
                       </Link>
                       {!p.member && p.senderName && (
-                        <span className="block text-xs text-slate-500">
+                        <span className="block text-xs text-slate-500 dark:text-white">
                           {p.senderName}
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3.5 text-slate-600">
+                    <td className="px-4 py-3.5 text-slate-600 dark:text-white">
                       {p.channel === "cash"
                         ? `Cash, ${p.loggedBy}`
                         : "Transfer"}
                     </td>
-                    <td className="px-4 py-3.5 font-mono text-xs text-slate-500">
+                    <td className="px-4 py-3.5 font-mono text-xs text-slate-500 dark:text-white">
                       {p.providerRef ?? "—"}
                     </td>
                     <td className="px-4 py-3.5">
