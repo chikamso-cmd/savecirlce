@@ -271,21 +271,21 @@ export default function OnboardingFlow({
                 aria-hidden="true"
               />
             </span>
-            <h2 className="mt-5 text-2xl font-extrabold tracking-tight sm:text-3xl dark:text-white">
+            <h2 className="mt-5 text-2xl font-extrabold tracking-tight sm:text-3xl">
               Your organisation is ready
             </h2>
             <ul className="mx-auto mt-6 max-w-sm space-y-2 text-left text-sm">
-              <li className="flex gap-2 dark:text-white ">
+              <li className="flex gap-2 ">
                 <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />{" "}
                 Policies saved
               </li>
-              <li className="flex gap-2 dark:text-white">
+              <li className="flex gap-2">
                 <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />
                 {summary?.invites
                   ? `${summary.invites} team invite${summary.invites > 1 ? "s" : ""} sent`
                   : "No team invites yet, add them from Team & roles"}
               </li>
-              <li className="flex gap-2 dark:text-white">
+              <li className="flex gap-2">
                 <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />
                 {summary?.groupName
                   ? `${summary.groupName} created, add members next`

@@ -23,7 +23,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
             Good morning, [Name]
           </h1>
-          <p className="mt-1 text-sm text-slate-600 sm:text-base dark:text-white">
+          <p className="mt-1 text-sm text-slate-600 sm:text-base">
             Here's what's happening across your groups today.
           </p>
         </div>

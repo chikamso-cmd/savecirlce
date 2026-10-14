@@ -75,20 +75,20 @@ function Section({
   badge?: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 sm:p-6">
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
       <div className="flex gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
           {icon}
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-lg font-bold dark:text-white">{title}</h3>
+            <h3 className="text-lg font-bold">{title}</h3>
             {badge}
           </div>
-          <p className="mt-0.5 text-sm text-slate-500 dark:text-white">{desc}</p>
+          <p className="mt-0.5 text-sm text-slate-500">{desc}</p>
         </div>
       </div>
-      <div className="mt-5 dark:text-white">{children}</div>
+      <div className="mt-5">{children}</div>
     </section>
   );
 }
@@ -107,8 +107,8 @@ function Toggle({
   return (
     <label className="flex cursor-pointer items-start justify-between gap-4">
       <span>
-        <span className="block text-sm font-semibold dark:text-white">{label}</span>
-        <span className="block text-sm text-slate-500 dark:text-white">{hint}</span>
+        <span className="block text-sm font-semibold">{label}</span>
+        <span className="block text-sm text-slate-500">{hint}</span>
       </span>
       <button
         type="button"
@@ -267,10 +267,10 @@ export default function SetupStep({
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl dark:text-white">
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
           Set up your organisation
         </h2>
-        <p className="mt-2 max-w-2xl text-base leading-relaxed dark:text-white  text-slate-600">
+        <p className="mt-2 max-w-2xl text-base leading-relaxed  text-slate-600">
           Set your rules, invite your team and create your first group. You can
           change all of this later in Settings.
         </p>
@@ -360,7 +360,7 @@ export default function SetupStep({
             {allowWithdrawals && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
                     Withdrawal notice period
                   </span>
                   <select
@@ -376,7 +376,7 @@ export default function SetupStep({
                   </select>
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
                     Instant limit
                   </span>
                   <input
@@ -387,12 +387,12 @@ export default function SetupStep({
                       setInstantLimit(Number(e.target.value.replace(/\D/g, "")))
                     }
                   />
-                  <span className="mt-1 block text-xs text-slate-500 dark:text-white">
+                  <span className="mt-1 block text-xs text-slate-500">
                     Below this, no notice or second approval.
                   </span>
                 </label>
                 <label className="block sm:col-span-2">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
                     Two-person approval above
                   </span>
                   <input
@@ -405,14 +405,14 @@ export default function SetupStep({
                       )
                     }
                   />
-                  <span className="mt-1 block text-xs text-slate-500 dark:text-white">
+                  <span className="mt-1 block text-xs text-slate-500">
                     A maker and a checker, never the same person.
                   </span>
                 </label>
               </div>
             )}
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white">
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
                 Payment reminders
               </span>
               <select
@@ -520,7 +520,7 @@ export default function SetupStep({
         title="Create your first group"
         desc="Set up a savings group to start collecting contributions."
         badge={
-          <span className="text-xs text-slate-400 dark:text-white">
+          <span className="text-xs text-slate-400">
             Optional
           </span>
         }
@@ -530,12 +530,12 @@ export default function SetupStep({
             <button
               type="button"
               onClick={() => setGroupOpen(true)}
-              className="flex w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-slate-300 px-4 py-8 text-emerald-700 hover:border-emerald-600  hover:bg-emerald-50/40 dark:text-emerald-500"
+              className="flex w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-slate-300 px-4 py-8 text-emerald-700 hover:border-emerald-600  hover:bg-emerald-50/40"
             >
               <span className="inline-flex items-center gap-2 font-semibold">
                 <Plus className="size-5" /> Add first group
               </span>
-              <span className="text-sm text-slate-500 dark:text-white">
+              <span className="text-sm text-slate-500">
                 You can create more groups later.
               </span>
             </button>
@@ -553,7 +553,7 @@ export default function SetupStep({
                     type="button"
                     aria-pressed={group.type === v}
                     onClick={() => setGroup({ ...group, type: v })}
-                    className={`min-h-11 rounded-lg border text-sm font-semibold ${group.type === v ? "border-emerald-700 bg-emerald-50 text-emerald-800" : "border-slate-300 text-slate-700 dark:text-white"}`}
+                    className={`min-h-11 rounded-lg border text-sm font-semibold ${group.type === v ? "border-emerald-700 bg-emerald-50 text-emerald-800" : "border-slate-300 text-slate-700"}`}
                   >
                     {label}
                   </button>
@@ -561,7 +561,7 @@ export default function SetupStep({
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
                 <label className="block sm:col-span-3 lg:col-span-1">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
                     Group name
                   </span>
                   <input
@@ -575,7 +575,7 @@ export default function SetupStep({
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
                     {group.type === "rotating"
                       ? "Amount per member"
                       : "Suggested deposit"}
@@ -595,7 +595,7 @@ export default function SetupStep({
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-white">
+                  <span className="mb-1.5 block text-sm font-medium text-slate-700">
                     Frequency
                   </span>
                   <select
@@ -611,7 +611,7 @@ export default function SetupStep({
                   </select>
                 </label>
               </div>
-              <p className="text-sm text-slate-500 dark:text-white">
+              <p className="text-sm text-slate-500">
                 You'll add members and set the rotation order from the group
                 page.
               </p>

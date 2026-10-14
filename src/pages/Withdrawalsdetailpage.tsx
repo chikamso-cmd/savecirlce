@@ -5,6 +5,7 @@ import {
   Check,
   CheckCircle2,
   ChevronLeft,
+  HandCoins,
   Loader2,
   RotateCcw,
   X,
@@ -12,11 +13,13 @@ import {
 // import { Pill } from "../components/widgets/DashboardWidgets";
 import {
   CURRENT_USER,
+  MANUAL_METHOD,
   POLICY,
 //   W_STATUS,
   approve,
   cancel,
   getWithdrawal,
+  markManualPaid,
   needsChecker,
   reject,
   retry,
@@ -123,6 +126,7 @@ export default function WithdrawalDetailsPage() {
     w.status,
   );
   const canRetry = w.status === "failed" && w.attempts < MAX_ATTEMPTS;
+  const canMarkPaid = !!w.manual && w.status === "scheduled";
   const daysToDue = (new Date(w.dueDate).getTime() - Date.now()) / 86_400_000;
   const escalated = w.status === "submitted" && daysToDue <= 2;
   const current = stepIndex(w);
@@ -209,6 +213,14 @@ export default function WithdrawalDetailsPage() {
       </section>
 
       {/* Status messages */}
+      {w.manual && (
+        <p className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+          <HandCoins className="size-5 shrink-0" aria-hidden="true" />
+          {w.status === "completed"
+            ? `Paid outside SaveCircle by ${MANUAL_METHOD[w.manual.method].toLowerCase()}. Recorded here so the member's balance and history stay correct.`
+            : `To be paid outside SaveCircle by ${MANUAL_METHOD[w.manual.method].toLowerCase()}. Nothing is sent automatically; mark it as paid once the money has gone out.`}
+        </p>
+      )}
       {escalated && (
         <p className="flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
           <AlertTriangle className="size-5 shrink-0" /> Due in under 2 days and
@@ -235,6 +247,7 @@ export default function WithdrawalDetailsPage() {
       {(canApprove ||
         canCancel ||
         canRetry ||
+        canMarkPaid ||
         (w.status === "submitted" && isMaker)) &&
         !panel && (
           <section className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 sm:flex-row sm:flex-wrap sm:items-center">
@@ -295,6 +308,27 @@ export default function WithdrawalDetailsPage() {
                   <RotateCcw className="size-4" />
                 )}{" "}
                 Retry now
+              </button>
+            )}
+            {canMarkPaid && (
+              <button
+                type="button"
+                disabled={!!busy}
+                onClick={() =>
+                  act(
+                    "paid",
+                    () => markManualPaid(w, CURRENT_USER.name),
+                    "Marked as paid. The member's balance is updated.",
+                  )
+                }
+                className={btnPrimary}
+              >
+                {busy === "paid" ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Check className="size-4" />
+                )}{" "}
+                Mark as paid
               </button>
             )}
             {canCancel && (
@@ -375,17 +409,37 @@ export default function WithdrawalDetailsPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
           <h2 className="font-bold">Details</h2>
           <dl className="mt-2 divide-y divide-slate-100 text-sm">
-            {[
-              ["Due date", `${fmtDay(w.dueDate)}, 09:00`],
-              ["Pay to", `${w.payoutAccount.name}`],
-              [
-                "Account",
-                `${w.payoutAccount.bank} ${w.payoutAccount.accountNumber}`,
-              ],
-              ["Raised by", `${w.createdBy}, ${fmtDateTime(w.createdAt)}`],
-              ["Early-withdrawal fee", w.fee ? naira(w.fee) : "None"],
-              ["Transfer attempts", `${w.attempts} of ${MAX_ATTEMPTS}`],
-            ].map(([k, v]) => (
+            {(w.manual
+              ? [
+                  w.manual.paidAt
+                    ? ["Paid on", fmtDateTime(w.manual.paidAt)]
+                    : ["Pay on", fmtDay(w.dueDate)],
+                  ["Paid by", MANUAL_METHOD[w.manual.method]],
+                  ["Pay to", w.payoutAccount.name],
+                  ...(w.manual.method === "transfer"
+                    ? [
+                        [
+                          "Account",
+                          `${w.payoutAccount.bank} ${w.payoutAccount.accountNumber}`,
+                        ],
+                      ]
+                    : []),
+                  ["Reference", w.manual.reference ?? "None"],
+                  ...(w.manual.note ? [["Note", w.manual.note]] : []),
+                  ["Recorded by", `${w.createdBy}, ${fmtDateTime(w.createdAt)}`],
+                ]
+              : [
+                  ["Due date", `${fmtDay(w.dueDate)}, 09:00`],
+                  ["Pay to", `${w.payoutAccount.name}`],
+                  [
+                    "Account",
+                    `${w.payoutAccount.bank} ${w.payoutAccount.accountNumber}`,
+                  ],
+                  ["Raised by", `${w.createdBy}, ${fmtDateTime(w.createdAt)}`],
+                  ["Early-withdrawal fee", w.fee ? naira(w.fee) : "None"],
+                  ["Transfer attempts", `${w.attempts} of ${MAX_ATTEMPTS}`],
+                ]
+            ).map(([k, v]) => (
               <div
                 key={k}
                 className="flex flex-col gap-0.5 py-3 sm:flex-row sm:justify-between sm:gap-4"
@@ -396,8 +450,9 @@ export default function WithdrawalDetailsPage() {
             ))}
           </dl>
           <p className="mt-2 text-xs text-slate-500">
-            On the due date the balance, payout account name and organisation
-            balance are re-checked before one transfer is sent.
+            {w.manual
+              ? "SaveCircle doesn't send money for manual withdrawals. It only updates the member's balance and history."
+              : "On the due date the balance, payout account name and organisation balance are re-checked before one transfer is sent."}
           </p>
         </section>
 
@@ -449,8 +504,9 @@ export default function WithdrawalDetailsPage() {
           ) : (
             <p className="mt-2 flex gap-2 text-sm text-slate-600">
               <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />{" "}
-              Within limits, so it was approved automatically after the policy
-              checks passed.
+              {w.manual
+                ? `Recorded by ${w.createdBy}. Paid outside SaveCircle, so no transfer approval was needed.`
+                : "Within limits, so it was approved automatically after the policy checks passed."}
             </p>
           )}
         </section>

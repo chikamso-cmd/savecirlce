@@ -6,3 +6,190 @@
 body {
   font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 }
+
+/* ------------------------------------------------------------------
+   Dark theme: "deep pine"
+   A green-tinted dark palette that matches the emerald brand, instead
+   of Tailwind's blue-grey slate. Neutral tokens are remapped here, so
+   every screen picks the theme up without per-component dark: classes.
+   Light shades become dark and dark shades become light, so classes
+   like `bg-white`, `border-slate-200` and `text-slate-900` just work.
+   ------------------------------------------------------------------ */
+.dark {
+  /* Surfaces: bg-white is the card, bg-slate-50 is the page */
+  --color-white: #10231e;
+
+  --color-slate-50: #0a1814;
+  --color-slate-100: #152d27;
+  --color-slate-200: #1d3a33;
+  --color-slate-300: #2b4b43;
+  --color-slate-400: #5e7e75;
+  --color-slate-500: #8aa69d;
+  --color-slate-600: #a9c0b9;
+  --color-slate-700: #c5d7d1;
+  --color-slate-800: #dce9e5;
+  --color-slate-900: #edf5f2;
+  --color-slate-950: #f6faf8;
+
+  --color-gray-50: var(--color-slate-50);
+  --color-gray-100: var(--color-slate-100);
+  --color-gray-200: var(--color-slate-200);
+  --color-gray-300: var(--color-slate-300);
+  --color-gray-400: var(--color-slate-400);
+  --color-gray-500: var(--color-slate-500);
+  --color-gray-600: var(--color-slate-600);
+  --color-gray-700: var(--color-slate-700);
+  --color-gray-800: var(--color-slate-800);
+  --color-gray-900: var(--color-slate-900);
+  --color-gray-950: var(--color-slate-950);
+
+  /* Soft status tints (only used as backgrounds) */
+  --color-emerald-50: #0f3a2e;
+  --color-green-50: #10361f;
+  --color-amber-50: #3a2c0c;
+  --color-red-50: #3d1717;
+  --color-sky-50: #0d2e3f;
+
+  --color-black: #000;
+}
+
+.dark body {
+  background-color: var(--color-slate-50);
+  color: var(--color-slate-900);
+}
+
+/* Overrides for utilities that can't follow a token remap.
+   `:where(.dark)` adds no specificity, and the :not() guards let an explicit
+   dark: class on an element win over these defaults. */
+@layer utilities {
+  /* text-white uses --color-white, which is now the card colour */
+  :where(.dark) .text-white:not([class*="dark:text-"]),
+  :where(.dark) .hover\:text-white:hover:not([class*="dark:hover:text-"]) {
+    color: #fff;
+  }
+  :where(.dark) .text-white\/85:not([class*="dark:text-"]) {
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  /* Dark chips such as toasts (bg-slate-900 text-white) stay dark */
+  :where(.dark) .bg-slate-900.text-white:not([class*="dark:bg-"]),
+  :where(.dark) .bg-gray-900.text-white:not([class*="dark:bg-"]) {
+    background-color: #1f4a3e;
+  }
+
+  /* Modal and drawer backdrops */
+  :where(.dark) .bg-slate-900\/40:not([class*="dark:bg-"]) {
+    background-color: rgb(0 0 0 / 0.6);
+  }
+
+  /* Stronger tints */
+  :where(.dark) .bg-emerald-100:not([class*="dark:bg-"]),
+  :where(.dark) .hover\:bg-emerald-100:hover:not([class*="dark:hover:bg-"]) {
+    background-color: #12473a;
+  }
+  :where(.dark) .bg-emerald-200:not([class*="dark:bg-"]) {
+    background-color: #175847;
+  }
+  :where(.dark) .bg-amber-100:not([class*="dark:bg-"]),
+  :where(.dark) .hover\:bg-amber-100:hover:not([class*="dark:hover:bg-"]) {
+    background-color: #4a380f;
+  }
+  :where(.dark) .bg-green-100:not([class*="dark:bg-"]) {
+    background-color: #134429;
+  }
+
+  /* Tinted borders */
+  :where(.dark) :is(.border-emerald-100, .border-emerald-200):not([class*="dark:border-"]) {
+    border-color: #1d5646;
+  }
+  :where(.dark) .border-emerald-300:not([class*="dark:border-"]) {
+    border-color: #24705a;
+  }
+  :where(.dark) :is(.border-amber-200, .border-amber-300):not([class*="dark:border-"]),
+  :where(.dark) .hover\:border-amber-300:hover:not([class*="dark:hover:border-"]) {
+    border-color: #6b5016;
+  }
+  :where(.dark) :is(.border-red-200, .border-red-300):not([class*="dark:border-"]),
+  :where(.dark) .hover\:border-red-300:hover:not([class*="dark:hover:border-"]) {
+    border-color: #6b2828;
+  }
+  :where(.dark) :is(.border-green-100, .border-green-300):not([class*="dark:border-"]),
+  :where(.dark) .hover\:border-green-300:hover:not([class*="dark:hover:border-"]) {
+    border-color: #1f5a37;
+  }
+
+  /* Deep accent text is too dark on a dark surface: lift it */
+  :where(.dark) :is(.text-emerald-600, .text-emerald-700):not([class*="dark:text-"]),
+  :where(.dark) .hover\:text-emerald-700:hover:not([class*="dark:hover:text-"]) {
+    color: var(--color-emerald-400);
+  }
+  :where(.dark) :is(.text-emerald-800, .text-emerald-900, .text-emerald-950):not([class*="dark:text-"]),
+  :where(.dark) :is(.hover\:text-emerald-900, .hover\:text-emerald-950):hover:not([class*="dark:hover:text-"]) {
+    color: var(--color-emerald-300);
+  }
+  :where(.dark) :is(.text-amber-600, .text-amber-700):not([class*="dark:text-"]) {
+    color: var(--color-amber-400);
+  }
+  :where(.dark) :is(.text-amber-800, .text-amber-900):not([class*="dark:text-"]) {
+    color: var(--color-amber-300);
+  }
+  :where(.dark) :is(.text-red-600, .text-red-700):not([class*="dark:text-"]),
+  :where(.dark) .hover\:text-red-600:hover:not([class*="dark:hover:text-"]) {
+    color: var(--color-red-400);
+  }
+  :where(.dark) :is(.text-red-800, .text-red-900):not([class*="dark:text-"]) {
+    color: var(--color-red-300);
+  }
+  :where(.dark) :is(.text-green-600, .text-green-700):not([class*="dark:text-"]),
+  :where(.dark) .hover\:text-green-700:hover:not([class*="dark:hover:text-"]) {
+    color: var(--color-green-400);
+  }
+  :where(.dark) .text-green-900:not([class*="dark:text-"]) {
+    color: var(--color-green-300);
+  }
+  :where(.dark) :is(.text-sky-700, .text-sky-800, .text-sky-900):not([class*="dark:text-"]) {
+    color: var(--color-sky-300);
+  }
+
+  /* Hard-coded brand hex colours on the auth and landing screens */
+  :where(.dark) :is(.bg-\[\#e9f4f0\], .bg-\[\#F7FEF9\]):not([class*="dark:bg-"]) {
+    background-color: var(--color-slate-50);
+  }
+  :where(.dark) .bg-\[\#f7faf9\]:not([class*="dark:bg-"]) {
+    background-color: var(--color-slate-50);
+  }
+  :where(.dark) .bg-\[\#e2e9ed\]:not([class*="dark:bg-"]) {
+    background-color: var(--color-slate-200);
+  }
+  :where(.dark) :is(.bg-\[\#f1faf5\], .bg-\[\#eaf7f1\], .bg-\[\#e8f7f0\]):not([class*="dark:bg-"]) {
+    background-color: var(--color-emerald-50);
+  }
+  :where(.dark) :is(.from-\[\#f8fbf9\], .via-\[\#f2faf6\]) {
+    --tw-gradient-from: var(--color-slate-50);
+    --tw-gradient-via: var(--color-slate-50);
+  }
+  :where(.dark) :is(.to-\[\#edf7f2\], .to-\[\#e4f6ed\]) {
+    --tw-gradient-to: #0d2a22;
+  }
+  :where(.dark) .border-\[\#dce5eb\]:not([class*="dark:border-"]) {
+    border-color: var(--color-slate-200);
+  }
+  :where(.dark) .border-\[\#9aafbd\]:not([class*="dark:border-"]) {
+    border-color: var(--color-slate-300);
+  }
+  :where(.dark) .border-\[\#cce9dc\]:not([class*="dark:border-"]) {
+    border-color: #1d5646;
+  }
+  :where(.dark) :is(.text-\[\#11323f\], .text-\[\#103b4a\], .text-\[\#173b4b\], .text-\[\#123b46\], .text-\[\#24445b\]):not([class*="dark:text-"]) {
+    color: var(--color-slate-900);
+  }
+  :where(.dark) :is(.text-\[\#4a6b78\], .text-\[\#557188\], .text-\[\#61778a\], .text-\[\#708397\], .text-\[\#72869a\]):not([class*="dark:text-"]) {
+    color: var(--color-slate-500);
+  }
+  :where(.dark) .text-\[\#8a9dad\]:not([class*="dark:text-"]) {
+    color: var(--color-slate-400);
+  }
+  :where(.dark) :is(.text-\[\#087f5b\], .text-\[\#05825a\], .text-\[\#075c43\], .text-\[\#056b4d\]):not([class*="dark:text-"]) {
+    color: var(--color-emerald-400);
+  }
+}

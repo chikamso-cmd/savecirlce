@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import {
   AlertTriangle,
   CheckCircle2,
+  HandCoins,
   Plus,
   RefreshCw,
   Search,
 } from "lucide-react";
 // import { Pill } from "../components/widgets/DashboardWidgets";
+import ManualWithdrawalModal from "../components/modals/ManualWithdrawal";
 import NewWithdrawalModal from "../components/modals/Newwithdrawals";
 import {
   CURRENT_USER,
@@ -41,6 +43,7 @@ export default function WithdrawalsPage() {
   const [kind, setKind] = useState<"all" | "withdrawal" | "payout">("all");
   const [query, setQuery] = useState("");
   const [creating, setCreating] = useState(false);
+  const [recordingManual, setRecordingManual] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   const load = async () => {
@@ -61,14 +64,17 @@ export default function WithdrawalsPage() {
   }, [toast]);
 
   // Float check: can the organisation's balance cover everything due in the next 7 days? (v4 §6.2)
+  // Manual withdrawals are paid outside SaveCircle, so they don't draw on it.
   const dueThisWeek = useMemo(() => {
     const limit = Date.now() + 7 * 86_400_000;
     return items
       .filter(
         (w) =>
+          !w.manual &&
           ["submitted", "approved", "scheduled", "held", "failed"].includes(
             w.status,
-          ) && new Date(w.dueDate).getTime() <= limit,
+          ) &&
+          new Date(w.dueDate).getTime() <= limit,
       )
       .reduce((s, w) => s + w.amount, 0);
   }, [items]);
@@ -129,6 +135,13 @@ export default function WithdrawalsPage() {
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800"
           >
             <Plus className="size-4" /> New notice
+          </button>
+          <button
+            type="button"
+            onClick={() => setRecordingManual(true)}
+            className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border-[1.5px] border-emerald-700 bg-white px-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
+          >
+            <HandCoins className="size-4" /> Manual withdrawal
           </button>
         </div>
       </div>
@@ -284,6 +297,11 @@ export default function WithdrawalsPage() {
                         : "Thrift withdrawal"}
                     , {w.group}
                   </p>
+                  {w.manual && (
+                    <span className="mt-1 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-700">
+                      Paid outside SaveCircle
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   {/* <Pill tone={W_STATUS[w.status].tone}>
@@ -309,6 +327,23 @@ export default function WithdrawalsPage() {
             setTab(w.status === "submitted" ? "approval" : "upcoming");
             setToast(
               `Notice created for ${w.member}, due ${fmtDate(w.dueDate)}.`,
+            );
+          }}
+        />
+      )}
+
+      {recordingManual && (
+        <ManualWithdrawalModal
+          createdBy={CURRENT_USER.name}
+          onClose={() => setRecordingManual(false)}
+          onCreated={(w) => {
+            setItems((list) => [w, ...list]);
+            setRecordingManual(false);
+            setTab(w.status === "completed" ? "done" : "upcoming");
+            setToast(
+              w.status === "completed"
+                ? `${naira(w.amount)} withdrawal recorded for ${w.member}.`
+                : `Manual withdrawal for ${w.member} scheduled for ${fmtDate(w.dueDate)}.`,
             );
           }}
         />

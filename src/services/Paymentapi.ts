@@ -540,3 +540,48 @@ export async function resendReceipt(p: Payment) {
     audit: [...p.audit, { at: stamp(), text: "Receipt re-sent" }],
   });
 }
+
+export interface ManualPaymentInput {
+  member: string;
+  group: string;
+  amount: number;
+  channel: Channel;
+  receivedAt: string; // ISO
+  reference?: string;
+  note?: string;
+  by: string;
+}
+
+// TODO: POST /payments (manual entry, written to the AuditLog)
+export async function recordPayment(input: ManualPaymentInput) {
+  await wait(700);
+  const m = DIRECTORY.find((d) => d.name === input.member);
+  const cash = input.channel === "cash";
+  const p: Payment = {
+    id: `p${Date.now()}`,
+    receivedAt: input.receivedAt,
+    amount: input.amount,
+    channel: input.channel,
+    status: "matched",
+    member: input.member,
+    memberPhone: m?.phone,
+    accountNumber: cash ? undefined : m?.accountNumber,
+    accountOwner: "member",
+    senderName: cash ? undefined : input.member,
+    narration: input.note || undefined,
+    providerRef: input.reference || undefined,
+    loggedBy: cash ? input.by : undefined,
+    allocations: [{ group: input.group, kind: "current", amount: input.amount }],
+    receiptSentAt: stamp(),
+    audit: [
+      {
+        at: stamp(),
+        text: `${cash ? "Cash" : "Transfer"} payment entered manually for ${input.member}, ${input.group}`,
+        by: input.by,
+      },
+      { at: stamp(), text: "Receipt sent by WhatsApp" },
+    ],
+  };
+  PAYMENTS = [p, ...PAYMENTS];
+  return clone(p);
+}

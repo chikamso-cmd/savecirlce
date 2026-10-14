@@ -410,10 +410,10 @@ export default function PaymentRailsStep({
   return (
     <div className="space-y-8">
       <header>
-        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl dark:text-white">
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
           Connect payment rails
         </h2>
-        <p className="mt-2 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-white">
+        <p className="mt-2 max-w-2xl text-base leading-relaxed text-slate-600">
           {mode === "ledger"
             ? "Informal groups use the free ledger-only plan. Members pay cash or transfer, and officers record it."
             : "Members pay into account numbers on these rails, and every payment is matched to them automatically."}

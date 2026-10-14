@@ -1,10 +1,10 @@
 import {
   AlertCircle,
   ArrowLeft,
-  Key,
+  // Key,
   Loader,
   MessageSquareText,
-  Phone,
+  // Phone,
 } from "lucide-react";
 import AuthLayout from "../../pages/forgotpassword/api/AuthLayout";
 import { useEffect, useState, type FormEvent } from "react";

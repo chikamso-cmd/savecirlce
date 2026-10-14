@@ -17,7 +17,7 @@ export function ThemeToggleButton() {
       onClick={toggleTheme}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       title={dark ? "Light mode" : "Dark mode"}
-      className="rounded-lg p-2.5 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+      className="rounded-lg p-2.5 text-slate-600 hover:bg-slate-100"
     >
       {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
     </button>
@@ -31,7 +31,7 @@ export function ThemeSelector() {
     <div
       role="radiogroup"
       aria-label="Theme"
-      className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800"
+      className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1"
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => {
         const on = theme === value;
@@ -44,8 +44,8 @@ export function ThemeSelector() {
             onClick={() => setTheme(value)}
             className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md px-2 text-sm font-semibold transition ${
               on
-                ? "bg-white text-emerald-800 shadow-sm dark:bg-slate-700 dark:text-emerald-300"
-                : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                ? "bg-white text-emerald-800 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
             <Icon className="size-4" aria-hidden="true" />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import AuthLayout from "../forgotpassword/api/AuthLayout";
 import OtpInput from "../forgotpassword/Otpinput";
@@ -7,20 +7,20 @@ import {
   MAX_OTP_ATTEMPTS,
   OTP_LENGTH,
   RESEND_SECONDS,
-  requestReset,
-  verifyOtp,
+  // requestReset,
+  // verifyOtp,
 } from "../forgotpassword/api/Authapi"
 
 
-interface FlowState {
-  identifier: string;
-  channel: "sms" | "email";
-  masked: string;
-}
+// interface FlowState {
+//   identifier: string;
+//   channel: "sms" | "email";
+//   masked: string;
+// }
 
 export default function VerifyOtpPage() {
-  const navigate = useNavigate();
-  const flow = useLocation().state as FlowState | null;
+  // const navigate = useNavigate();
+  // const flow = useLocation().state as FlowState | null;
 
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export default function VerifyOtpPage() {
   const [attempts, setAttempts] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
   const [resending, setResending] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  // const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = "Enter code | SaveCircle";
@@ -109,7 +109,7 @@ export default function VerifyOtpPage() {
               {error}
             </p>
           )}
-          {!error && notice && <p className="text-emerald-700">{notice}</p>}
+          {/* {!error && notice && <p className="text-emerald-700">{notice}</p>} */}
         </div>
 
         <button

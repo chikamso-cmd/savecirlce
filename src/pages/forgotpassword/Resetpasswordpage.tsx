@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Check, CheckCircle2, Eye, EyeOff, Loader2, X } from "lucide-react";
 import AuthLayout from "../forgotpassword/api/AuthLayout";
 import { resetPassword } from "../forgotpassword/api/Authapi";

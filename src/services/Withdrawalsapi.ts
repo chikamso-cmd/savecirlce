@@ -37,6 +37,22 @@ export interface Withdrawal {
   failReason?: string;
   fee: number;
   history: { at: string; text: string; by?: string }[];
+  manual?: ManualDetails; // paid outside SaveCircle, no automatic transfer
+}
+
+export type ManualMethod = "cash" | "transfer" | "other";
+
+export const MANUAL_METHOD: Record<ManualMethod, string> = {
+  cash: "Cash",
+  transfer: "Bank transfer",
+  other: "Other",
+};
+
+export interface ManualDetails {
+  method: ManualMethod;
+  reference?: string;
+  note?: string;
+  paidAt?: string; // set once the money has actually gone out
 }
 
 export interface MemberBalance {
@@ -382,8 +398,10 @@ export async function listBalances() {
   return clone(BALANCES);
 }
 
-export const needsChecker = (w: Pick<Withdrawal, "amount" | "kind">) =>
-  w.kind === "payout" || w.amount > POLICY.twoPersonAbove;
+// Manual withdrawals are paid outside SaveCircle, so there's no transfer to approve
+export const needsChecker = (
+  w: Pick<Withdrawal, "amount" | "kind" | "manual">,
+) => !w.manual && (w.kind === "payout" || w.amount > POLICY.twoPersonAbove);
 
 // Policy checks shown in the form and on the details page (v4 §6.1, §6.4)
 export function policyChecks(
@@ -531,6 +549,115 @@ export async function retry(w: Withdrawal, by: string) {
     history: [
       ...w.history,
       { at: now(), text: "Retry scheduled for 09:00 tomorrow", by },
+    ],
+  });
+}
+
+// TODO: POST /withdrawals/manual
+// Records a withdrawal paid outside SaveCircle (cash, the organisation's own
+// bank app, ...). SaveCircle never sends money for these; it only keeps the
+// member's balance and history right.
+export async function recordManualWithdrawal(input: {
+  balance: MemberBalance;
+  amount: number;
+  fullExit: boolean;
+  method: ManualMethod;
+  date: string; // ISO: when it was paid, or when it will be
+  alreadyPaid: boolean;
+  accountNumber?: string; // bank transfers only
+  reference?: string;
+  note?: string;
+  by: string;
+}) {
+  const { balance: b, amount, method, date, alreadyPaid, by } = input;
+  const account =
+    method === "transfer"
+      ? b.payoutAccounts.find((a) => a.accountNumber === input.accountNumber)
+      : undefined;
+  const how = MANUAL_METHOD[method].toLowerCase();
+  const w: Withdrawal = {
+    id: `w${Date.now()}`,
+    kind: "withdrawal",
+    member: b.member,
+    group: b.group,
+    amount,
+    fullExit: input.fullExit,
+    payoutAccount: account ?? {
+      bank: MANUAL_METHOD[method],
+      accountNumber: "",
+      name: b.member,
+    },
+    dueDate: date,
+    status: alreadyPaid ? "completed" : "scheduled",
+    createdBy: by,
+    createdAt: now(),
+    approvals: [],
+    attempts: 0,
+    fee: 0,
+    manual: {
+      method,
+      reference: input.reference || undefined,
+      note: input.note || undefined,
+      paidAt: alreadyPaid ? date : undefined,
+    },
+    history: [
+      {
+        at: now(),
+        text: alreadyPaid
+          ? `Recorded as already paid by ${how}`
+          : `Manual withdrawal scheduled, to be paid by ${how}`,
+        by,
+      },
+      ...(input.fullExit
+        ? [{ at: now(), text: "Full balance: member exit from the group is scheduled" }]
+        : []),
+      ...(alreadyPaid
+        ? [{ at: now(), text: "Member balance updated, receipt sent" }]
+        : []),
+    ],
+  };
+  const idx = BALANCES.findIndex((x) => x.member === b.member);
+  if (idx >= 0)
+    BALANCES[idx] = {
+      ...BALANCES[idx],
+      ...(alreadyPaid
+        ? { savings: BALANCES[idx].savings - amount }
+        : { pending: BALANCES[idx].pending + amount }),
+      withdrawalsThisMonth: BALANCES[idx].withdrawalsThisMonth + 1,
+    };
+  return save(w);
+}
+
+// TODO: POST /withdrawals/:id/mark-paid (manual withdrawals only)
+export async function markManualPaid(
+  w: Withdrawal,
+  by: string,
+  reference?: string,
+) {
+  const idx = BALANCES.findIndex((x) => x.member === w.member);
+  if (idx >= 0)
+    BALANCES[idx] = {
+      ...BALANCES[idx],
+      savings: BALANCES[idx].savings - w.amount,
+      pending: Math.max(0, BALANCES[idx].pending - w.amount),
+    };
+  return save({
+    ...w,
+    status: "completed",
+    manual: {
+      method: w.manual?.method ?? "other",
+      ...w.manual,
+      reference: reference || w.manual?.reference,
+      paidAt: now(),
+    },
+    history: [
+      ...w.history,
+      {
+        at: now(),
+        text: `Marked as paid outside SaveCircle${reference ? ` (ref ${reference})` : ""}`,
+        by,
+      },
+      { at: now(), text: "Member balance updated, receipt sent" },
     ],
   });
 }

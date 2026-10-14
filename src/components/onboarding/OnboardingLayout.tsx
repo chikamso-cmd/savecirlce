@@ -8,9 +8,9 @@ export const btnPrimary =
 export const btnSecondary =
   "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border-[1.5px] border-emerald-700 bg-white px-5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-50";
 export const btnGhost =
-  "inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 dark:text-emerald-500";
+  "inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700";
 export const inputBase =
-  "w-full min-h-12 rounded-lg border border-slate-300 bg-white px-4 text-[15px] text-slate-900 placeholder:text-slate-400 dark:placeholder:text-white focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 dark:bg-slate-900 dark:text-white";
+  "w-full min-h-12 rounded-lg border border-slate-300 bg-white px-4 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20";
 
 const STEP_LABELS = [
   "Organisation",
@@ -75,8 +75,8 @@ function Stepper({ statuses }: { statuses: StepStatus[] }) {
                   s === "review"
                     ? "font-semibold text-amber-800"
                     : s === "upcoming"
-                      ? "text-slate-500 dark:text-white"
-                      : "font-medium text-emerald-700 dark:text-emerald-600"
+                      ? "text-slate-500"
+                      : "font-medium text-emerald-700"
                 } ${s === "current" ? "font-bold" : ""}`}
               >
                 {label}
@@ -127,7 +127,7 @@ export default function OnboardingLayout({
 }: LayoutProps) {
   // const { isDarkMode, toggleTheme } = useTheme();
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 lg:grid lg:grid-cols-[minmax(340px,420px)_1fr]">
+    <div className="min-h-screen bg-white text-slate-900 lg:grid lg:grid-cols-[minmax(340px,420px)_1fr]">
       <aside className="relative overflow-hidden bg-emerald-50 px-5 pb-6 pt-5  sm:px-8 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:px-12 lg:pt-12">
         <Logo />
         <div className="mt-6 lg:mt-14">
@@ -161,14 +161,14 @@ export default function OnboardingLayout({
         </div>
       </aside>
 
-      <main className="mx-auto w-full max-w-5xl px-5 pb-10 pt-4 sm:px-8 lg:px-14 lg:pt-8 dark:bg-slate-900">
+      <main className="mx-auto w-full max-w-5xl px-5 pb-10 pt-4 sm:px-8 lg:px-14 lg:pt-8">
         
         <div className="flex items-center justify-between">
           {/* dark mode toggler button */}
           <div>
            <ThemeToggleButton />
           </div>
-          <div className="mb-4 flex justify-end lg:mb-8 dark:text-white">
+          <div className="mb-4 flex justify-end lg:mb-8">
             <button
               type="button"
               onClick={onSaveLater}

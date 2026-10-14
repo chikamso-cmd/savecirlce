@@ -60,11 +60,11 @@ export default function OrganisationStep({ value, onChange, onSubmit }: Props) {
   return (
     <div className="space-y-10">
       <header>
-        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl dark:text-white">
+        <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
           Create your organisation
         </h2>
        
-        <p className="mt-2 max-w-2xl text-base leading-relaxed not-dark:text-[#123b46] dark:text-white   ">
+        <p className="mt-2 max-w-2xl text-base leading-relaxed not-dark:text-[#123b46]   ">
           Name your organisation and tell us what kind it is. We use the type to
           pick the right documents and the right way to move money.
         </p>
@@ -88,11 +88,11 @@ export default function OrganisationStep({ value, onChange, onSubmit }: Props) {
       <section aria-labelledby="org-name-heading">
         <h3
           id="org-name-heading"
-          className="text-lg font-bold text-emerald-800 dark:text-emerald-600"
+          className="text-lg font-bold text-emerald-800"
         >
           Organisation name
         </h3>
-        <p className="mt-1 text-sm text-slate-500 dark:text-white">
+        <p className="mt-1 text-sm text-slate-500">
           Use your registered name. Members see it on their account numbers.
         </p>
         <label className="mt-5 block max-w-xl">
@@ -110,11 +110,11 @@ export default function OrganisationStep({ value, onChange, onSubmit }: Props) {
       <section aria-labelledby="org-type-heading">
         <h3
           id="org-type-heading"
-          className="text-lg font-bold text-emerald-800 dark:text-emerald-600"
+          className="text-lg font-bold text-emerald-800"
         >
           Organisation type
         </h3>
-        <p className="mt-1 text-sm text-slate-500 dark:text-white">
+        <p className="mt-1 text-sm text-slate-500">
           This decides which documents we ask for during verification.
         </p>
         <div

@@ -58,14 +58,14 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
 
   return (
     <header
-      className={`sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur dark:bg-slate-900`}
+      className={`sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur`}
     >
       <div className="flex h-16 justify-between items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
         <button
           type="button"
           onClick={onOpenMenu}
           aria-label="Open menu"
-          className="-ml-2 rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden dark:text-white dark:hover:bg-slate-600"
+          className="-ml-2 rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
         >
           <Menu className="size-6" />
         </button>
@@ -76,7 +76,7 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
             role="search"
             className="hidden max-w-md flex-1 md:block"
           >
-            <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-slate-500 dark:text-white focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20 dark:bg-slate-900">
+            <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-slate-500 focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
               <Search className="size-4 shrink-0" aria-hidden="true" />
               <span className="sr-only">Search</span>
               <input
@@ -84,17 +84,17 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search members, groups or payments"
-                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:placeholder:text-white"
+                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
               />
             </label>
           </form>
           <div className="flex-1 md:hidden" />
-          <label className="hidden items-center gap-2 text-sm text-slate-600 dark:text-white sm:flex">
+          <label className="hidden items-center gap-2 text-sm text-slate-600 sm:flex">
             <span>Branch</span>
             <select
               value={branch}
               onChange={(e) => changeBranch(e.target.value)}
-              className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 focus:border-emerald-600 focus:outline-none dark:bg-slate-900 dark:text-white"
+              className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-900 focus:border-emerald-600 focus:outline-none"
             >
               <option value="all">All branches</option>
               {organisation.branches.map((b) => (
@@ -131,14 +131,14 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
               onClick={() => toggle("notifications")}
               aria-label={`Notifications, ${attention.length} unread`}
               aria-expanded={panel === "notifications"}
-              className="relative rounded-lg p-2.5 text-slate-600 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-900 cursor-pointer"
+              className="relative rounded-lg p-2.5 text-slate-600 hover:bg-slate-100 cursor-pointer"
             >
               <Bell className="size-5" />
               <span className="absolute right-2 top-2 size-2 rounded-full bg-amber-500 ring-2 ring-white" />
             </button>
             {panel === "notifications" && (
-              <div className="absolute right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:bg-slate-900">
-                <p className="border-b border-slate-100 px-4 py-3 text-sm font-bold dark:text-white">
+              <div className="absolute right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                <p className="border-b border-slate-100 px-4 py-3 text-sm font-bold">
                   Notifications
                 </p>
                 <ul className="max-h-80 overflow-y-auto">
@@ -147,7 +147,7 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
                       <Link
                         to={a.href}
                         onClick={() => setPanel(null)}
-                        className="block px-4 py-3 hover:bg-slate-50 dark:text-white dark:hover:bg-slate-600 "
+                        className="block px-4 py-3 hover:bg-slate-50 "
                       >
                         <p className="text-sm font-semibold ">{a.title}</p>
                         <p className="mt-0.5 text-xs">{a.detail}</p>
@@ -165,16 +165,16 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
               onClick={() => toggle("profile")}
               aria-expanded={panel === "profile"}
               aria-label="Account menu"
-              className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-slate-600"
+              className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-100"
             >
               <span className="flex size-9 items-center justify-center rounded-full bg-emerald-100 text-xs font-extrabold text-emerald-800">
                 {currentUser.initials}
               </span>
               <span className="hidden text-left lg:block">
-                <span className="block text-sm font-semibold text-slate-900 dark:text-white">
+                <span className="block text-sm font-semibold text-slate-900">
                   {currentUser.name}
                 </span>
-                <span className="block text-xs text-slate-500 dark:text-white">
+                <span className="block text-xs text-slate-500">
                   {currentUser.role}
                 </span>
               </span>
@@ -184,26 +184,26 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
               />
             </button>
             {panel === "profile" && (
-              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg dark:bg-slate-900">
+              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
                 <Link
                   to="/profile"
                   onClick={() => setPanel(null)}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-slate-50 dark:text-white dark:hover:bg-slate-600"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-slate-50"
                 >
-                  <User className="size-4 text-slate-500 dark:text-white" />{" "}
+                  <User className="size-4 text-slate-500" />{" "}
                   Your profile
                 </Link>
                 <Link
                   to="/settings"
                   onClick={() => setPanel(null)}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-slate-50 dark:text-white dark:hover:bg-slate-600"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-slate-50"
                 >
-                  <Settings className="size-4 text-slate-500 dark:text-white" />{" "}
+                  <Settings className="size-4 text-slate-500" />{" "}
                   Settings
                 </Link>
                 {/* theme selector */}
-                <div className="border-t border-slate-100 px-3 py-3 dark:border-slate-800">
-                  <p className="mb-2 px-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <div className="border-t border-slate-100 px-3 py-3">
+                  <p className="mb-2 px-1 text-xs font-semibold text-slate-500">
                     Appearance
                   </p>
                   <ThemeSelector />

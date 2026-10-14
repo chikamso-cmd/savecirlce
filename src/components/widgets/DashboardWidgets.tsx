@@ -25,10 +25,10 @@ export function Card({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 dark:bg-slate-900  ${className}`}
+      className={`rounded-2xl border border-slate-200 bg-white p-5 sm:p-6  ${className}`}
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white">{title}</h2>
+        <h2 className="text-base font-bold text-slate-900">{title}</h2>
         {action}
       </div>
       {children}
@@ -73,7 +73,7 @@ const noteTone: Record<Tone, string> = {
   success: "text-emerald-700",
   warning: "text-amber-700",
   info: "text-slate-600",
-  neutral: "text-slate-600 dark:text-white",
+  neutral: "text-slate-600",
 };
 
 export function StatCards() {
@@ -83,10 +83,10 @@ export function StatCards() {
         <Link
           key={s.label}
           to={s.href}
-          className={`rounded-2xl border border-slate-200 bg-white p-4 dark:text-white dark:bg-slate-900 transition hover:border-emerald-600 sm:p-5 ${i === stats.length - 1 ? "col-span-2 lg:col-span-1" : ""}`}
+          className={`rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-emerald-600 sm:p-5 ${i === stats.length - 1 ? "col-span-2 lg:col-span-1" : ""}`}
         >
           <span className="flex items-center justify-between gap-2">
-            <span className="text-xs font-semibold text-slate-600 dark:text-white sm:text-sm">
+            <span className="text-xs font-semibold text-slate-600 sm:text-sm">
               {s.label}
             </span>
             <span
@@ -94,7 +94,7 @@ export function StatCards() {
               aria-hidden="true"
             />
           </span>
-          <span className="mt-2 block text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl dark:text-white">
+          <span className="mt-2 block text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
             {s.value}
           </span>
           <span
@@ -114,7 +114,7 @@ export function CollectionsChart() {
     <Card
       title="Collections, last 14 days"
       action={
-        <div className="flex gap-4 text-xs text-slate-600 dark:text-white">
+        <div className="flex gap-4 text-xs text-slate-600">
           <span className="flex items-center gap-1.5">
             <span className="size-2.5 rounded-sm bg-emerald-700" /> Transfer
           </span>
@@ -169,9 +169,9 @@ export function CashInHand() {
           <li key={o.id}>
             <Link
               to={`/cash/${o.id}`}
-              className="flex items-center gap-3 py-3 hover:bg-slate-50 dark:hover:bg-slate-600"
+              className="flex items-center gap-3 py-3 hover:bg-slate-50"
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-500 dark:text-white text-xs font-extrabold text-slate-600">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-extrabold text-slate-600">
                 {o.initials}
               </span>
               <span className="min-w-0 flex-1">
@@ -179,7 +179,7 @@ export function CashInHand() {
                   {o.name}
                 </span>
                 <span
-                  className={`block text-xs font-semibold ${o.overdue ? "text-amber-700" : "text-slate-500 dark:text-white"}`}
+                  className={`block text-xs font-semibold ${o.overdue ? "text-amber-700" : "text-slate-500"}`}
                 >
                   {o.age}
                 </span>
@@ -204,10 +204,10 @@ export function WithdrawalsDue() {
           <li key={w.id}>
             <Link
               to={`/withdrawals/${w.id}`}
-              className="flex items-center gap-3 py-3 hover:bg-slate-50 dark:hover:bg-slate-600"
+              className="flex items-center gap-3 py-3 hover:bg-slate-50"
             >
-              <span className="w-11 shrink-0 rounded-lg bg-emerald-50 dark:bg-slate-500 py-1 text-center">
-                <span className="block text-[11px] font-semibold text-slate-500 dark:text-white">
+              <span className="w-11 shrink-0 rounded-lg bg-emerald-50 py-1 text-center">
+                <span className="block text-[11px] font-semibold text-slate-500">
                   {w.weekday}
                 </span>
                 <span className="block text-base font-extrabold">{w.date}</span>
@@ -261,7 +261,7 @@ export function RecentPayments() {
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs text-slate-500 dark:text-white ">
+            <tr className="text-left text-xs text-slate-500 ">
               <th className="py-2.5 pr-3 font-semibold">Time</th>
               <th className="px-3 py-2.5 font-semibold">Member</th>
               <th className="px-3 py-2.5 font-semibold">Group</th>
@@ -274,9 +274,9 @@ export function RecentPayments() {
             {payments.map((p) => (
               <tr
                 key={p.id}
-                className="hover:bg-slate-50 dark:hover:bg-slate-600"
+                className="hover:bg-slate-50"
               >
-                <td className="py-3.5 pr-3 text-slate-500 dark:text-white">
+                <td className="py-3.5 pr-3 text-slate-500">
                   {p.time}
                 </td>
                 <td className="px-3 py-3.5 font-semibold">
@@ -287,10 +287,10 @@ export function RecentPayments() {
                     {p.member}
                   </Link>
                 </td>
-                <td className="px-3 py-3.5 text-slate-600 dark:text-white">
+                <td className="px-3 py-3.5 text-slate-600">
                   {p.group}
                 </td>
-                <td className="px-3 py-3.5 text-slate-600 dark:text-white">
+                <td className="px-3 py-3.5 text-slate-600">
                   {p.channel}
                 </td>
                 <td className="px-3 py-3.5">
@@ -324,12 +324,12 @@ export function NeedsAttention() {
               {a.count}
             </span>
             <div className="min-w-0 flex-1 basis-48">
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{a.title}</p>
-              <p className="text-xs text-slate-500 sm:text-sm dark:text-white">{a.detail}</p>
+              <p className="text-sm font-bold text-slate-900">{a.title}</p>
+              <p className="text-xs text-slate-500 sm:text-sm">{a.detail}</p>
             </div>
             <Link
               to={a.href}
-              className="ml-14 inline-flex min-h-10 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-800 dark:text-white hover:border-emerald-600 hover:text-emerald-700 sm:ml-0"
+              className="ml-14 inline-flex min-h-10 items-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-800 hover:border-emerald-600 hover:text-emerald-700 sm:ml-0"
             >
               {a.action}
             </Link>

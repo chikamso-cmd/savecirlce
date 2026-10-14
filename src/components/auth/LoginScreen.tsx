@@ -11,8 +11,6 @@ import {
   ShieldCheck,
   UserRound,
   UsersRound,
-  Sun,
-  Moon,
   Loader,
 } from "lucide-react";
 // import { useTheme } from "../../contexts/useTheme";
@@ -25,7 +23,7 @@ import {
   type AuthSession,
 } from "../../services/Api";
 import { preloadGoogle, requestGoogleCode } from "../../services/googleAuth";
-import { api, tokenStore } from "../../services/Axios";
+import {  tokenStore } from "../../services/Axios";
 import { toast } from "react-toastify";
 import { ThemeToggleButton } from "../../contexts/ThemeProvider";
 
@@ -33,7 +31,7 @@ const SESSION_KEY = "savecircle:session";
 
 const fieldClass =
   "h-11 w-full rounded-lg border border-[#dce5eb] pl-10 pr-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15";
-const labelClass = "mb-2 block text-xs font-semibold text-[#61778a] dark:text-white";
+const labelClass = "mb-2 block text-xs font-semibold text-[#61778a]";
 const primaryBtn =
   "mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#07835e] text-sm font-bold text-white transition-colors hover:bg-[#066c4f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087f5b] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
 
@@ -45,8 +43,8 @@ function normalizeNgPhone(input: string): string | null {
   return /^[789]\d{9}$/.test(digits) ? `+234${digits}` : null;
 }
 
-const maskPhone = (e164: string) =>
-  `${e164.slice(0, 4)} ${e164.slice(4, 7)} *** ${e164.slice(-4)}`;
+// const maskPhone = (e164: string) =>
+//   `${e164.slice(0, 4)} ${e164.slice(4, 7)} *** ${e164.slice(-4)}`;
 
 function ErrorText({ children }: { children: string }) {
   return (
@@ -257,19 +255,19 @@ function LoginForm() {
 
 // v4 §4.1 step 1: sign up with phone + OTP, then continue to organisation onboarding
 function SignUpForm({
-  stage,
+  // stage,
   onStageChange,
 }: {
   stage: "details" | "otp";
   onStageChange: (s: "details" | "otp") => void;
 }) {
-  const afterLogin = useAfterLogin();
+  // const afterLogin = useAfterLogin();
   const [full_Name, setFull_Name] = useState<string>("");
   const [phoneInput, setPhoneInput] = useState<string>("");
   const [agreed, setAgreed] = useState(false);
   const [attempted, setAttempted] = useState(false);
-  const [phone, setPhone] = useState<string | null>(null);
-  const [code, setCode] = useState("");
+  // const [phone, setPhone] = useState<string | null>(null);
+  // const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
@@ -290,26 +288,26 @@ function SignUpForm({
     terms: agreed ? null : "Agree to the terms to continue.",
   };
 
-  const sendCode = async (to: string) => {
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await api.post(``);
-      console.log(res);
-      setPhone(to);
-      setCode("");
-      setResendIn(60);
-      onStageChange("otp");
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
+  // const sendCode = async (to: string) => {
+  //   setBusy(true);
+  //   setError(null);
+  //   try {
+  //     const res = await api.post(``);
+  //     console.log(res);
+  //     // setPhone(to);
+  //     // setCode("");
+  //     setResendIn(60);
+  //   } catch (e) {
+  //     setError((e as Error).message);
+  //   } finally {
+  //     setBusy(false);
+  //   }
+  // };
+  
   const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    onStageChange("otp");
 
     if (!full_Name) {
       setError("please enter your full name!");
@@ -335,6 +333,7 @@ function SignUpForm({
         full_Name,
       };
       // await api.post(``, payload);
+      setAttempted(true);
       sessionStorage.setItem("phone", phoneInput)
       console.log("btn clicked", payload);
       navigate("/signup/verify");
@@ -481,7 +480,7 @@ function SignUpForm({
         {attempted && errors.phone ? (
           <ErrorText>{errors.phone}</ErrorText>
         ) : (
-          <p className="mt-2 text-xs text-[#61778a] dark:text-white">
+          <p className="mt-2 text-xs text-[#61778a]">
             We'll text you a 6-digit code to confirm it's you.
           </p>
         )}
@@ -495,7 +494,7 @@ function SignUpForm({
             onChange={(event) => setAgreed(event.target.checked)}
             className="size-4 rounded border-[#9aafbd] accent-[#087f5b]"
           />
-          <span className="dark:text-white">
+          <span className="">
             I agree to the{" "}
             <a
               href="#terms"
@@ -542,8 +541,8 @@ const AuthForm = ({ mode }: AuthFormProps) => {
   const onOtp = isSignup && signupStage === "otp";
 
   return (
-    <main className="auth-page min-h-screen bg-[#e9f4f0] dark:bg-slate-900 p-0 md:p-4 lg:p-6 flex items-center justify-center">
-      <section className="auth-frame w-full max-w-[1400px] min-h-screen md:min-h-[min(820px,calc(100vh-2rem))] overflow-hidden bg-white md:rounded-xl md:shadow-[0_24px_70px_rgba(10,61,49,0.14)] grid md:grid-cols-2 dark:bg-emerald-900 dark:text-white">
+    <main className="auth-page min-h-screen bg-[#e9f4f0] p-0 md:p-4 lg:p-6 flex items-center justify-center">
+      <section className="auth-frame w-full max-w-[1400px] min-h-screen md:min-h-[min(820px,calc(100vh-2rem))] overflow-hidden bg-white md:rounded-xl md:shadow-[0_24px_70px_rgba(10,61,49,0.14)] grid md:grid-cols-2">
         <aside className="relative hidden md:flex flex-col overflow-hidden bg-[#064d3d] px-10 py-10 lg:px-14 lg:py-12 text-white">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_88%_35%,rgba(16,144,101,0.45),transparent_40%),linear-gradient(145deg,#064d3d_0%,#053c33_72%,#07392f_100%)]" />
           <div className="relative z-10 flex items-center gap-3">
@@ -595,14 +594,14 @@ const AuthForm = ({ mode }: AuthFormProps) => {
               <ThemeToggleButton />
             </div>
             <div>
-              <span className="dark:text-white">
+              <span className="">
                 {isSignup
                   ? "Already have an account?"
                   : "Don't have an account?"}
               </span>
               <Link
                 to={isSignup ? "/login" : "/signup"}
-                className="ml-2 inline-flex items-center gap-1 font-bold text-[#087f5b] dark:text-white hover:text-[#12f5b1]"
+                className="ml-2 inline-flex items-center gap-1 font-bold text-[#087f5b] hover:text-[#12f5b1]"
               >
                 {isSignup ? "Log in" : "Sign up"}{" "}
                 <ArrowRight className="size-4" />
@@ -611,14 +610,14 @@ const AuthForm = ({ mode }: AuthFormProps) => {
           </div>
 
           <div className="m-auto w-full max-w-[440px] py-10">
-            <h2 className="text-[30px] sm:text-[34px] font-bold leading-tight tracking-tight text-[#103b4a] dark:text-white">
+            <h2 className="text-[30px] sm:text-[34px] font-bold leading-tight tracking-tight text-[#103b4a]">
               {onOtp
                 ? "Check your phone"
                 : isSignup
                   ? "Create your account"
                   : "Welcome Back"}
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[#61778a] dark:text-white">
+            <p className="mt-2 text-sm leading-relaxed text-[#61778a]">
               {onOtp
                 ? "Enter the 6-digit code we just sent you by SMS."
                 : isSignup
@@ -633,7 +632,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             )}
           </div>
 
-          <p className="mx-auto max-w-sm text-center text-[10px] leading-relaxed text-[#72869a] dark:text-white">
+          <p className="mx-auto max-w-sm text-center text-[10px] leading-relaxed text-[#72869a]">
             By continuing, you agree to our{" "}
             <a
               href="#terms"

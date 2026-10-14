@@ -2,11 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeftRight,
+  CheckCircle2,
   Download,
+  Plus,
   RefreshCw,
   Search,
   Wallet,
 } from "lucide-react";
+import AddPaymentModal from "../components/modals/AddPayment";
 import { Pill } from "../components/widgets/DashboardWidgets";
 import { STATUS, listPayments, type Payment } from "../services/Paymentapi";
 
@@ -30,6 +33,8 @@ const inRange = (iso: string, range: Range) => {
   return Date.now() - d.getTime() <= days * 86_400_000;
 };
 
+const CURRENT_USER = "[Officer 1]"; // TODO: from your auth session
+
 const FILTERS: { id: Filter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "transfer", label: "Transfer" },
@@ -45,6 +50,14 @@ export default function PaymentsPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [range, setRange] = useState<Range>("7d");
   const [query, setQuery] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const load = async () => {
     setLoading(true);
@@ -146,7 +159,7 @@ export default function PaymentsPage() {
             type="button"
             onClick={load}
             disabled={loading}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold hover:border-emerald-600 disabled:opacity-60 dark:bg-slate-900"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold hover:border-emerald-600 disabled:opacity-60"
           >
             <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} />{" "}
             Refresh
@@ -155,15 +168,22 @@ export default function PaymentsPage() {
             type="button"
             onClick={exportCsv}
             disabled={!visible.length}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border-[1.5px] border-emerald-700 bg-white px-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-600 "
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border-[1.5px] border-emerald-700 bg-white px-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 "
           >
             <Download className="size-4" /> Export CSV
+          </button>
+          <button
+            type="button"
+            onClick={() => setAdding(true)}
+            className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800"
+          >
+            <Plus className="size-4" /> Add payment
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-semibold text-slate-600 sm:text-sm">
             Collected
           </p>
@@ -171,7 +191,7 @@ export default function PaymentsPage() {
             {naira(totals.total)}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-semibold text-slate-600 sm:text-sm">
             By transfer
           </p>
@@ -180,7 +200,7 @@ export default function PaymentsPage() {
           </p>
           <p className="text-xs text-slate-500">{naira(totals.transfer)}</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-semibold text-slate-600 sm:text-sm">
             Cash
           </p>
@@ -191,7 +211,7 @@ export default function PaymentsPage() {
         <button
           type="button"
           onClick={() => setFilter("unmatched")}
-          className="rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-emerald-600 dark:bg-slate-900"
+          className="rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-emerald-600"
         >
           <span className="block text-xs font-semibold text-slate-600 sm:text-sm">
             Unmatched
@@ -220,14 +240,14 @@ export default function PaymentsPage() {
                 type="button"
                 onClick={() => setFilter(f.id)}
                 aria-pressed={filter === f.id}
-                className={`min-h-10 rounded-full border px-4 text-sm font-semibold ${filter === f.id ? "border-emerald-700 bg-emerald-50 text-emerald-800" : "border-slate-300 bg-white text-slate-700 hover:border-emerald-600 dark:bg-slate-900 dark:text-white cursor-pointer"}`}
+                className={`min-h-10 rounded-full border px-4 text-sm font-semibold ${filter === f.id ? "border-emerald-700 bg-emerald-50 text-emerald-800" : "border-slate-300 bg-white text-slate-700 hover:border-emerald-600 cursor-pointer"}`}
               >
                 {f.label}
               </button>
             ))}
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <label className="flex h-11 flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 px-3 text-slate-500 dark:text-white focus-within:border-emerald-600 lg:w-80 lg:flex-none ">
+            <label className="flex h-11 flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-slate-500 focus-within:border-emerald-600 lg:w-80 lg:flex-none ">
               <Search className="size-4 shrink-0" aria-hidden="true" />
               <span className="sr-only">Search payments</span>
               <input
@@ -235,14 +255,14 @@ export default function PaymentsPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Member, sender, narration or reference"
-                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white"
+                className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
               />
             </label>
             <select
               value={range}
               onChange={(e) => setRange(e.target.value as Range)}
               aria-label="Date range"
-              className="h-11 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 px-3 text-sm font-semibold focus:border-emerald-600 focus:outline-none"
+              className="h-11 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold focus:border-emerald-600 focus:outline-none"
             >
               <option value="today">Today</option>
               <option value="7d">Last 7 days</option>
@@ -266,7 +286,7 @@ export default function PaymentsPage() {
           ))}
         </div>
       ) : visible.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:bg-slate-900">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
           <p className="font-semibold">No payments match</p>
           <p className="mt-1 text-sm text-slate-500">
             Try a longer date range or another filter.
@@ -290,7 +310,7 @@ export default function PaymentsPage() {
               <li key={p.id}>
                 <Link
                   to={`/payments/${p.id}`}
-                  className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:bg-slate-900 bg-white p-4 hover:border-emerald-600"
+                  className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 hover:border-emerald-600"
                 >
                   <span
                     className={`flex size-9 shrink-0 items-center justify-center rounded-full ${p.channel === "cash" ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}
@@ -329,9 +349,9 @@ export default function PaymentsPage() {
             ))}
           </ul>
 
-          <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white md:block dark:bg-slate-900">
+          <div className="hidden overflow-x-auto rounded-2xl border border-slate-200 bg-white md:block">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs text-slate-500 dark:bg-slate-600 dark:text-white">
+              <thead className="bg-slate-50 text-left text-xs text-slate-500">
                 <tr>
                   <th className="px-5 py-3 font-semibold">Received</th>
                   <th className="px-4 py-3 font-semibold">Member / sender</th>
@@ -346,9 +366,9 @@ export default function PaymentsPage() {
                   <tr
                     key={p.id}
                     onClick={() => navigate(`/payments/${p.id}`)}
-                    className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-600"
+                    className="cursor-pointer hover:bg-slate-50"
                   >
-                    <td className="whitespace-nowrap px-5 py-3.5 text-slate-500 dark:text-white">
+                    <td className="whitespace-nowrap px-5 py-3.5 text-slate-500">
                       {formatWhen(p.receivedAt)}
                     </td>
                     <td className="px-4 py-3.5">
@@ -360,17 +380,17 @@ export default function PaymentsPage() {
                         {p.member ?? "Unknown sender"}
                       </Link>
                       {!p.member && p.senderName && (
-                        <span className="block text-xs text-slate-500 dark:text-white">
+                        <span className="block text-xs text-slate-500">
                           {p.senderName}
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3.5 text-slate-600 dark:text-white">
+                    <td className="px-4 py-3.5 text-slate-600">
                       {p.channel === "cash"
                         ? `Cash, ${p.loggedBy}`
                         : "Transfer"}
                     </td>
-                    <td className="px-4 py-3.5 font-mono text-xs text-slate-500 dark:text-white">
+                    <td className="px-4 py-3.5 font-mono text-xs text-slate-500">
                       {p.providerRef ?? "—"}
                     </td>
                     <td className="px-4 py-3.5">
@@ -389,6 +409,35 @@ export default function PaymentsPage() {
             </table>
           </div>
         </>
+      )}
+
+      {adding && (
+        <AddPaymentModal
+          recordedBy={CURRENT_USER}
+          onClose={() => setAdding(false)}
+          onCreated={(p) => {
+            setPayments((list) => [p, ...list]);
+            setAdding(false);
+            // Make sure the new entry is visible in the list
+            if (!inRange(p.receivedAt, range)) setRange("30d");
+            setFilter("all");
+            setQuery("");
+            setToast(`${naira(p.amount)} from ${p.member} added.`);
+          }}
+        />
+      )}
+
+      {toast && (
+        <div
+          role="status"
+          className="fixed inset-x-4 bottom-4 z-[60] mx-auto flex max-w-md items-center gap-3 rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-lg sm:inset-x-auto sm:right-6"
+        >
+          <CheckCircle2
+            className="size-5 shrink-0 text-emerald-400"
+            aria-hidden="true"
+          />{" "}
+          {toast}
+        </div>
       )}
     </div>
   );

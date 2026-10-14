@@ -49,7 +49,7 @@ const KIND_LABEL: Record<AllocationKind, string> = {
 };
 
 const inputCls =
-  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 dark:bg-slate-900";
+  "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20";
 const btnPrimary =
   "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50";
 const btnOutline =
@@ -184,7 +184,7 @@ export default function PaymentDetailsPage() {
       </Link>
 
       {/* Summary */}
-      <section className="flex flex-col gap-4 rounded-2xl border border-slate-200 dark:bg-slate-900 bg-white p-5 sm:flex-row sm:items-center sm:p-6">
+      <section className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 sm:flex-row sm:items-center sm:p-6">
         <span
           className={`flex size-12 shrink-0 items-center justify-center rounded-full ${transfer ? "bg-emerald-50 text-emerald-700" : "bg-amber-50  text-amber-700"}`}
         >
@@ -211,7 +211,7 @@ export default function PaymentDetailsPage() {
 
       {/* Status-specific guidance and actions */}
       {p.status === "unmatched" && (
-        <section className="rounded-2xl border dark:bg-slate-900  border-amber-200 bg-amber-50 p-5">
+        <section className="rounded-2xl border  border-amber-200 bg-amber-50 p-5">
           <p className="flex gap-2 text-sm text-amber-900">
             <AlertCircle className="size-5 shrink-0" />
             {p.accountOwner === "organisation"
@@ -261,7 +261,7 @@ export default function PaymentDetailsPage() {
       {/* Action panels */}
       {panel && (
         <section
-          className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 sm:p-6"
+          className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
           aria-live="polite"
         >
           <h2 className="font-bold">
@@ -316,7 +316,7 @@ export default function PaymentDetailsPage() {
               </div>
             )}
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-400">
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
                 Reason (saved to the audit log)
               </span>
               <textarea
@@ -412,7 +412,7 @@ export default function PaymentDetailsPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Details */}
-        <section className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-5 sm:p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
           <h2 className="font-bold">Details</h2>
           <dl className="mt-2 divide-y divide-slate-100">
             <Row label="Member">
