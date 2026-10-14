@@ -9,7 +9,7 @@ import {
 import AuthLayout from "../../pages/forgotpassword/api/AuthLayout";
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api } from "../../services/Axios";
+// import { api } from "../../services/Axios";
 import { toast } from "react-toastify";
 
 const fieldClass =
@@ -75,7 +75,7 @@ export default function Verifyotp() {
         phone,
         code,
       };
-      await api.post(``, payload);
+      // await api.post(``, payload);
       setTimeout(() => {
         navigate("/dashboard");
       }, 3500);
