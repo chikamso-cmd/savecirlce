@@ -17,6 +17,16 @@
           var dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
           document.documentElement.classList.toggle('dark', dark);
           document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          // Brand colour picked in Settings (written by BrandContext)
+          var brandCss = localStorage.getItem('savecircle:brand-css');
+          var brand = localStorage.getItem('savecircle:brand');
+          if (brandCss && brand) {
+            var style = document.createElement('style');
+            style.id = 'savecircle-brand';
+            style.textContent = brandCss;
+            document.head.appendChild(style);
+            document.documentElement.dataset.brand = brand;
+          }
         } catch (e) {}
       })();
     </script>

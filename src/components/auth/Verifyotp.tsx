@@ -77,10 +77,10 @@ export default function Verifyotp() {
       };
       // await api.post(``, payload);
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/onboarding");
       }, 3500);
       setError("");
-      toast.success("verification successful redirecting to dashboard");
+      toast.success("verification successful redirecting to onboarding screen");
       console.log("btn clickrd", payload);
     } catch (err: any) {
       setError("");

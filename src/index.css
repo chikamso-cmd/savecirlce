@@ -74,7 +74,7 @@ body {
   /* Dark chips such as toasts (bg-slate-900 text-white) stay dark */
   :where(.dark) .bg-slate-900.text-white:not([class*="dark:bg-"]),
   :where(.dark) .bg-gray-900.text-white:not([class*="dark:bg-"]) {
-    background-color: #1f4a3e;
+    background-color: color-mix(in oklab, var(--color-emerald-700) 45%, var(--color-slate-100));
   }
 
   /* Modal and drawer backdrops */
@@ -85,10 +85,10 @@ body {
   /* Stronger tints */
   :where(.dark) .bg-emerald-100:not([class*="dark:bg-"]),
   :where(.dark) .hover\:bg-emerald-100:hover:not([class*="dark:hover:bg-"]) {
-    background-color: #12473a;
+    background-color: color-mix(in oklab, var(--color-emerald-700) 45%, var(--color-white));
   }
   :where(.dark) .bg-emerald-200:not([class*="dark:bg-"]) {
-    background-color: #175847;
+    background-color: color-mix(in oklab, var(--color-emerald-700) 60%, var(--color-white));
   }
   :where(.dark) .bg-amber-100:not([class*="dark:bg-"]),
   :where(.dark) .hover\:bg-amber-100:hover:not([class*="dark:hover:bg-"]) {
@@ -100,10 +100,10 @@ body {
 
   /* Tinted borders */
   :where(.dark) :is(.border-emerald-100, .border-emerald-200):not([class*="dark:border-"]) {
-    border-color: #1d5646;
+    border-color: color-mix(in oklab, var(--color-emerald-600) 45%, var(--color-white));
   }
   :where(.dark) .border-emerald-300:not([class*="dark:border-"]) {
-    border-color: #24705a;
+    border-color: color-mix(in oklab, var(--color-emerald-600) 65%, var(--color-white));
   }
   :where(.dark) :is(.border-amber-200, .border-amber-300):not([class*="dark:border-"]),
   :where(.dark) .hover\:border-amber-300:hover:not([class*="dark:hover:border-"]) {
@@ -169,7 +169,7 @@ body {
     --tw-gradient-via: var(--color-slate-50);
   }
   :where(.dark) :is(.to-\[\#edf7f2\], .to-\[\#e4f6ed\]) {
-    --tw-gradient-to: #0d2a22;
+    --tw-gradient-to: color-mix(in oklab, var(--color-emerald-700) 20%, var(--color-slate-50));
   }
   :where(.dark) .border-\[\#dce5eb\]:not([class*="dark:border-"]) {
     border-color: var(--color-slate-200);
@@ -178,7 +178,7 @@ body {
     border-color: var(--color-slate-300);
   }
   :where(.dark) .border-\[\#cce9dc\]:not([class*="dark:border-"]) {
-    border-color: #1d5646;
+    border-color: color-mix(in oklab, var(--color-emerald-600) 45%, var(--color-white));
   }
   :where(.dark) :is(.text-\[\#11323f\], .text-\[\#103b4a\], .text-\[\#173b4b\], .text-\[\#123b46\], .text-\[\#24445b\]):not([class*="dark:text-"]) {
     color: var(--color-slate-900);
@@ -192,4 +192,48 @@ body {
   :where(.dark) :is(.text-\[\#087f5b\], .text-\[\#05825a\], .text-\[\#075c43\], .text-\[\#056b4d\]):not([class*="dark:text-"]) {
     color: var(--color-emerald-400);
   }
+}
+
+/* ------------------------------------------------------------------
+   Custom brand colour (Settings > Branding)
+   BrandContext sets data-brand on <html> and overrides --color-emerald-*,
+   which re-colours every emerald-* class. The auth and landing screens use
+   hard-coded hex greens, so map those onto the brand ladder too.
+   ------------------------------------------------------------------ */
+:root[data-brand] :is(.bg-\[\#07835e\], .bg-\[\#056b4d\]) {
+  background-color: var(--color-emerald-700);
+}
+:root[data-brand] :is(.hover\:bg-\[\#066c4f\], .hover\:bg-\[\#04553d\]):hover {
+  background-color: var(--color-emerald-800);
+}
+:root[data-brand] .bg-\[\#064d3d\] {
+  background-color: var(--color-emerald-900);
+}
+:root[data-brand] .from-\[\#064d3d\] {
+  --tw-gradient-from: var(--color-emerald-900);
+}
+:root[data-brand] .to-\[\#064d3d\] {
+  --tw-gradient-to: var(--color-emerald-900);
+}
+:root[data-brand] .border-\[\#087f5b\] {
+  border-color: var(--color-emerald-700);
+}
+:root[data-brand] :is(.ring-\[\#087f5b\], .focus-visible\:ring-\[\#087f5b\]) {
+  --tw-ring-color: var(--color-emerald-700);
+}
+:root[data-brand] .accent-\[\#087f5b\] {
+  accent-color: var(--color-emerald-700);
+}
+:root[data-brand] .text-\[\#51d8a0\] {
+  color: var(--color-emerald-300);
+}
+/* Dark mode already lifts these text colours; only remap them in light mode */
+:root[data-brand]:not(.dark) :is(.text-\[\#087f5b\], .text-\[\#05825a\], .text-\[\#056b4d\]) {
+  color: var(--color-emerald-700);
+}
+:root[data-brand]:not(.dark) .text-\[\#075c43\] {
+  color: var(--color-emerald-800);
+}
+:root[data-brand] .hover\:text-\[\#12f5b1\]:hover {
+  color: var(--color-emerald-500);
 }

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import { HelpBotProvider } from "../../contexts/HelpBotContext";
+import { HelpBotLauncher } from "../support/HelpBot";
 
 const COLLAPSE_KEY = "savecircle:sidebar-collapsed";
 
@@ -29,21 +31,25 @@ export default function DashboardLayout() {
     });
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <Sidebar
-        collapsed={collapsed}
-        mobileOpen={mobileOpen}
-        onToggleCollapse={toggleCollapse}
-        onCloseMobile={() => setMobileOpen(false)}
-      />
-      <div
-        className={`flex min-h-screen flex-col transition-[padding] duration-200 ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}
-      >
-        <Header onOpenMenu={() => setMobileOpen(true)} />
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-          <Outlet />
-        </main>
+    <HelpBotProvider>
+      <div className="min-h-screen bg-slate-50 text-slate-900">
+        <Sidebar
+          collapsed={collapsed}
+          mobileOpen={mobileOpen}
+          onToggleCollapse={toggleCollapse}
+          onCloseMobile={() => setMobileOpen(false)}
+        />
+        <div
+          className={`flex min-h-screen flex-col transition-[padding] duration-200 ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}
+        >
+          <Header onOpenMenu={() => setMobileOpen(true)} />
+          <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+            <Outlet />
+          </main>
+        </div>
+        {/* Floating help assistant, shared with Settings > Help & support */}
+        <HelpBotLauncher />
       </div>
-    </div>
+    </HelpBotProvider>
   );
 }

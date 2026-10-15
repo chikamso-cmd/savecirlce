@@ -1,18 +1,30 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   AlertCircle,
+  Check,
   CheckCircle2,
+  Clock,
   Eye,
   EyeOff,
   ImageUp,
   Loader2,
+  Mail,
   RefreshCw,
+  RotateCcw,
 } from "lucide-react";
+import { useBrand } from "../contexts/BrandContext";
+import { useHelpBot } from "../contexts/HelpBotContext";
+import { ThemeSelector } from "../contexts/ThemeProvider";
+import { HelpChat } from "../components/support/HelpBot";
+import { BRAND_PRESETS, DEFAULT_BRAND } from "../lib/brandPalette";
+import { SUPPORT } from "../lib/helpBotKnowledge";
 
 // Organisation settings from v4 §3.1 (type, money mode, branding, policies) and §6.1 (withdrawal policy).
 // Sample values; replace with GET/PATCH /organisation.
 
-type Tab = "organisation" | "branding" | "policies" | "rails";
+type Tab = "organisation" | "branding" | "policies" | "rails" | "help";
+const TAB_IDS: Tab[] = ["organisation", "branding", "policies", "rails", "help"];
 
 interface Settings {
   name: string;
@@ -63,14 +75,6 @@ const ORG = {
   collectionAccount: "0123456789",
   bank: "[Issuing bank]",
 };
-const COLOURS = [
-  "#047857",
-  "#0F766E",
-  "#1D4ED8",
-  "#7C3AED",
-  "#B45309",
-  "#BE123C",
-];
 
 const inputCls =
   "w-full min-h-11 rounded-lg border border-slate-300 bg-white px-3.5 text-[15px] focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 disabled:bg-slate-50 disabled:text-slate-500";
@@ -123,9 +127,15 @@ function Card({
 }
 
 export default function SettingsPage() {
-  const [tab, setTab] = useState<Tab>("organisation");
-  const [saved, setSaved] = useState<Settings>(INITIAL);
-  const [draft, setDraft] = useState<Settings>(INITIAL);
+  const [params, setParams] = useSearchParams();
+  const tabParam = params.get("tab") as Tab | null;
+  const tab: Tab = tabParam && TAB_IDS.includes(tabParam) ? tabParam : "organisation";
+  const setTab = (t: Tab) => setParams({ tab: t }, { replace: true });
+
+  const { brandColour, setBrandColour, previewBrandColour } = useBrand();
+  const { setLauncher } = useHelpBot();
+  const [saved, setSaved] = useState<Settings>(() => ({ ...INITIAL, brandColour }));
+  const [draft, setDraft] = useState<Settings>(() => ({ ...INITIAL, brandColour }));
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const logoRef = useRef<HTMLInputElement>(null);
@@ -173,12 +183,27 @@ export default function SettingsPage() {
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved);
   const valid = Object.keys(errors).length === 0;
+  const saveBarShown = dirty && tab !== "rails" && tab !== "help";
+
+  // Preview an unsaved brand colour across the whole app; drop the preview when leaving
+  useEffect(() => {
+    previewBrandColour(draft.brandColour !== saved.brandColour ? draft.brandColour : null);
+  }, [draft.brandColour, saved.brandColour, previewBrandColour]);
+  useEffect(() => () => previewBrandColour(null), [previewBrandColour]);
+
+  // The help tab already shows the chat, so hide the floating button there,
+  // and lift it above the save bar when that is showing
+  useEffect(() => {
+    setLauncher(tab === "help" ? "hidden" : saveBarShown ? "raised" : "normal");
+  }, [tab, saveBarShown, setLauncher]);
+  useEffect(() => () => setLauncher("normal"), [setLauncher]);
 
   // TODO: PATCH /organisation
   const save = async () => {
     setSaving(true);
     await new Promise((r) => setTimeout(r, 700));
     setSaved(draft);
+    setBrandColour(draft.brandColour);
     setSaving(false);
     setToast("Settings saved.");
   };
@@ -223,6 +248,7 @@ export default function SettingsPage() {
     { id: "branding", label: "Branding" },
     { id: "policies", label: "Policies" },
     { id: "rails", label: "Payment rails" },
+    { id: "help", label: "Help & support" },
   ];
 
   const keyValid = /^sk_(live|test)_\w{8,}/.test(newKey);
@@ -376,30 +402,83 @@ export default function SettingsPage() {
               />
             </div>
             <fieldset>
-              <legend className="mb-2 text-sm font-medium text-slate-700">
+              <legend className="mb-1 text-sm font-medium text-slate-700">
                 Brand colour
               </legend>
+              <p className="mb-3 text-xs text-slate-500">
+                Re-colours the whole app: menus, buttons, links and highlights.
+                You'll see a preview straight away; save to keep it.
+              </p>
               <div className="flex flex-wrap items-center gap-2">
-                {COLOURS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => set("brandColour", c)}
-                    aria-label={`Colour ${c}`}
-                    aria-pressed={draft.brandColour === c}
-                    className={`size-10 rounded-full ring-offset-2 ${draft.brandColour === c ? "ring-2 ring-slate-900" : ""}`}
-                    style={{ background: c }}
+                {BRAND_PRESETS.map(({ hex, name }) => {
+                  const on = draft.brandColour.toLowerCase() === hex.toLowerCase();
+                  return (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => set("brandColour", hex)}
+                      aria-label={name}
+                      title={name}
+                      aria-pressed={on}
+                      className={`flex size-10 items-center justify-center rounded-full ring-offset-2 ${on ? "ring-2 ring-slate-900" : ""}`}
+                      style={{ background: hex }}
+                    >
+                      {on && <Check className="size-5 text-white" aria-hidden="true" />}
+                    </button>
+                  );
+                })}
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <input
+                    type="color"
+                    value={draft.brandColour}
+                    onChange={(e) => set("brandColour", e.target.value)}
+                    aria-label="Custom colour"
+                    className="h-10 w-14 cursor-pointer rounded-lg border border-slate-300"
                   />
-                ))}
-                <input
-                  type="color"
-                  value={draft.brandColour}
-                  onChange={(e) => set("brandColour", e.target.value)}
-                  aria-label="Custom colour"
-                  className="h-10 w-14 cursor-pointer rounded-lg border border-slate-300"
-                />
+                  Custom
+                </label>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <span className="font-mono text-slate-600">
+                  {draft.brandColour.toUpperCase()}
+                </span>
+                {draft.brandColour.toLowerCase() !== DEFAULT_BRAND.toLowerCase() && (
+                  <button
+                    type="button"
+                    onClick={() => set("brandColour", DEFAULT_BRAND)}
+                    className="inline-flex items-center gap-1.5 font-semibold text-slate-600 hover:text-emerald-700"
+                  >
+                    <RotateCcw className="size-4" aria-hidden="true" /> Reset to
+                    SaveCircle green
+                  </button>
+                )}
               </div>
             </fieldset>
+            <div className="rounded-xl bg-slate-50 p-4">
+              <p className="text-xs font-semibold text-slate-500">Preview</p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <span className="inline-flex min-h-10 items-center rounded-lg bg-emerald-700 px-4 text-sm font-bold text-white">
+                  Primary button
+                </span>
+                <span className="inline-flex min-h-10 items-center rounded-lg border border-emerald-700 px-4 text-sm font-semibold text-emerald-700">
+                  Secondary
+                </span>
+                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                  Paid
+                </span>
+                <span className="text-sm font-semibold text-emerald-700 underline">
+                  A link
+                </span>
+              </div>
+            </div>
+          </Card>
+          <Card
+            title="Appearance"
+            desc="Light or dark mode for this device. Your brand colour works with both."
+          >
+            <div className="max-w-sm">
+              <ThemeSelector />
+            </div>
           </Card>
           <Card
             title="SMS sender ID"
@@ -683,8 +762,37 @@ export default function SettingsPage() {
         </>
       )}
 
+      {tab === "help" && (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <HelpChat />
+          <div className="space-y-6">
+            <Card
+              title="How this works"
+              desc="The assistant answers simple questions about using SaveCircle. For anything about missing money, disputes, errors or your account, it hands you to a customer representative."
+            >
+              <p className="text-sm text-slate-600">
+                You can also open the assistant from the chat button on any page.
+              </p>
+            </Card>
+            <Card title="Contact support">
+              <a
+                href={`mailto:${SUPPORT.email}`}
+                className="flex items-center gap-3 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                <Mail className="size-4 shrink-0" aria-hidden="true" />
+                {SUPPORT.email}
+              </a>
+              <p className="flex items-start gap-3 text-sm text-slate-600">
+                <Clock className="size-4 shrink-0 translate-y-0.5" aria-hidden="true" />
+                {SUPPORT.hours}. We usually reply {SUPPORT.replyTime}.
+              </p>
+            </Card>
+          </div>
+        </div>
+      )}
+
       {/* Save bar for the form tabs */}
-      {dirty && tab !== "rails" && (
+      {saveBarShown && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur lg:left-64">
           <div className="mx-auto flex max-w-4xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p className="text-sm text-slate-600">
