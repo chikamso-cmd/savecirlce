@@ -201,6 +201,11 @@ export const emptyKyb = (): KybData => ({
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
 export const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 
+export const formatSize = (b: number) =>
+  b < 1024 * 1024
+    ? `${Math.round(b / 1024)} KB`
+    : `${(b / 1024 / 1024).toFixed(1)} MB`;
+
 // TODO: replace with the bank list from your PaymentProvider (e.g. GET /bank)
 export const BANKS = [
   { code: "044", name: "Access Bank" },

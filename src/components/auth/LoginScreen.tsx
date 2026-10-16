@@ -26,6 +26,7 @@ import { preloadGoogle, requestGoogleCode } from "../../services/googleAuth";
 import {  tokenStore } from "../../services/Axios";
 import { toast } from "react-toastify";
 import { ThemeToggleButton } from "../../contexts/ThemeProvider";
+import { getOrganisation } from "../../lib/OrgStore";
 
 const SESSION_KEY = "savecircle:session";
 
@@ -67,7 +68,8 @@ function saveSession({ user, accessToken }: AuthSession) {
   }
 }
 
-// Where to go after signing in: the protected page that bounced them here, else onboarding.
+// Where to go after signing in: the protected page that bounced them here,
+// else the dashboard, or onboarding if they haven't created an organisation yet.
 // Only same-site paths are accepted so ?next= can't redirect off SaveCircle.
 function useAfterLogin() {
   const navigate = useNavigate();
@@ -75,8 +77,8 @@ function useAfterLogin() {
   return () => {
     const next = params.get("next") ?? "";
     const safe = next.startsWith("/") && !next.startsWith("//");
-    // Real version: send users who finished onboarding to /dashboard instead
-    navigate(safe ? next : "/onboarding", { replace: true });
+    const home = getOrganisation() ? "/dashboard" : "/onboarding";
+    navigate(safe ? next : home, { replace: true });
   };
 }
 

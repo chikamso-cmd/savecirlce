@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   AlertCircle,
   Check,
@@ -8,6 +8,7 @@ import {
   Eye,
   EyeOff,
   ImageUp,
+  Info,
   Loader2,
   Mail,
   RefreshCw,
@@ -17,8 +18,19 @@ import { useBrand } from "../contexts/BrandContext";
 import { useHelpBot } from "../contexts/HelpBotContext";
 import { ThemeSelector } from "../contexts/ThemeProvider";
 import { HelpChat } from "../components/support/HelpBot";
+import {
+  BankRails,
+  GatewayRails,
+} from "../components/onboarding/PaymentRailsStep";
 import { BRAND_PRESETS, DEFAULT_BRAND } from "../lib/brandPalette";
 import { SUPPORT } from "../lib/helpBotKnowledge";
+import { useOrganisation } from "../lib/OrgStore";
+import {
+  MONEY_MODE_INFO,
+  ORG_TYPES,
+  moneyModeFor,
+  type Provider,
+} from "../types/types";
 
 // Organisation settings from v4 §3.1 (type, money mode, branding, policies) and §6.1 (withdrawal policy).
 // Sample values; replace with GET/PATCH /organisation.
@@ -68,12 +80,23 @@ const INITIAL: Settings = {
   reminderTime: "08:00",
 };
 
-const ORG = {
-  type: "Cooperative",
-  moneyMode: "Gateway-hosted",
-  provider: "Paystack",
-  collectionAccount: "0123456789",
+// TODO: GET /organisation/collection-account once KYB passes and rails are connected
+const COLLECTION = {
+  account: "0123456789",
   bank: "[Issuing bank]",
+};
+
+const PROVIDER_INFO: Record<Provider, { name: string; keyHint: string; keyPattern: RegExp }> = {
+  paystack: {
+    name: "Paystack",
+    keyHint: "Starts with sk_live_",
+    keyPattern: /^sk_(live|test)_\w{8,}/,
+  },
+  flutterwave: {
+    name: "Flutterwave",
+    keyHint: "Starts with FLWSECK-",
+    keyPattern: /^FLWSECK(_TEST)?-\w{8,}/,
+  },
 };
 
 const inputCls =
@@ -134,8 +157,18 @@ export default function SettingsPage() {
 
   const { brandColour, setBrandColour, previewBrandColour } = useBrand();
   const { setLauncher } = useHelpBot();
-  const [saved, setSaved] = useState<Settings>(() => ({ ...INITIAL, brandColour }));
-  const [draft, setDraft] = useState<Settings>(() => ({ ...INITIAL, brandColour }));
+  const { organisation, updateOrganisation } = useOrganisation();
+  const orgType = organisation?.type ?? "cooperative";
+  const moneyMode = moneyModeFor(orgType);
+  const rails = organisation?.rails ?? null;
+  const verified = organisation?.kyb?.status === "approved";
+  const initial = (): Settings => ({
+    ...INITIAL,
+    name: organisation?.name ?? INITIAL.name,
+    brandColour,
+  });
+  const [saved, setSaved] = useState<Settings>(initial);
+  const [draft, setDraft] = useState<Settings>(initial);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const logoRef = useRef<HTMLInputElement>(null);
@@ -151,6 +184,10 @@ export default function SettingsPage() {
   const [newKey, setNewKey] = useState("");
   const [showKey, setShowKey] = useState(false);
   const [keySaving, setKeySaving] = useState(false);
+  // Setup flow shows when nothing is connected yet, or when changing provider
+  const [changingRails, setChangingRails] = useState(false);
+  const [readyProvider, setReadyProvider] = useState<Provider | null>(null);
+  const showRailsSetup = moneyMode !== "ledger" && (!rails || changingRails);
 
   useEffect(() => {
     document.title = "Settings | SaveCircle";
@@ -204,6 +241,7 @@ export default function SettingsPage() {
     await new Promise((r) => setTimeout(r, 700));
     setSaved(draft);
     setBrandColour(draft.brandColour);
+    updateOrganisation({ name: draft.name.trim() });
     setSaving(false);
     setToast("Settings saved.");
   };
@@ -243,6 +281,35 @@ export default function SettingsPage() {
     setToast("Secret key replaced. Run a connection test to confirm.");
   };
 
+  // TODO: the gateway check already stored the key server-side; this just records the result
+  const saveGateway = () => {
+    if (!readyProvider) return;
+    updateOrganisation({
+      rails: {
+        mode: "gateway",
+        provider: readyProvider,
+        connectedAt: new Date().toISOString(),
+      },
+    });
+    setChecks({
+      keys: true,
+      webhook: true,
+      transfers: true,
+      testedAt: new Date().toISOString(),
+    });
+    setReadyProvider(null);
+    setChangingRails(false);
+    setToast(`${PROVIDER_INFO[readyProvider].name} connected.`);
+  };
+
+  const saveBankTicket = (ticket: string | null) => {
+    if (!ticket) return;
+    updateOrganisation({
+      rails: { mode: "bank", ticket, connectedAt: new Date().toISOString() },
+    });
+    setChangingRails(false);
+  };
+
   const TABS: { id: Tab; label: string }[] = [
     { id: "organisation", label: "Organisation" },
     { id: "branding", label: "Branding" },
@@ -251,7 +318,8 @@ export default function SettingsPage() {
     { id: "help", label: "Help & support" },
   ];
 
-  const keyValid = /^sk_(live|test)_\w{8,}/.test(newKey);
+  const provider = rails?.mode === "gateway" ? PROVIDER_INFO[rails.provider] : null;
+  const keyValid = !!provider && provider.keyPattern.test(newKey);
 
   return (
     <div className="mx-auto max-w-8xl space-y-6 pb-24">
@@ -320,15 +388,23 @@ export default function SettingsPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
                 label="Organisation type"
-                hint="Set during verification. Contact support to change it."
+                hint="Set when you signed up. Contact support to change it."
               >
-                <input className={inputCls} value={ORG.type} disabled />
+                <input
+                  className={inputCls}
+                  value={ORG_TYPES.find((t) => t.value === orgType)?.title ?? orgType}
+                  disabled
+                />
               </Field>
               <Field
                 label="Money mode"
-                hint="Funds sit in your own gateway account, never with SaveCircle."
+                hint={MONEY_MODE_INFO[moneyMode].description}
               >
-                <input className={inputCls} value={ORG.moneyMode} disabled />
+                <input
+                  className={inputCls}
+                  value={MONEY_MODE_INFO[moneyMode].title}
+                  disabled
+                />
               </Field>
             </div>
           </Card>
@@ -655,7 +731,90 @@ export default function SettingsPage() {
         </>
       )}
 
-      {tab === "rails" && (
+      {tab === "rails" && moneyMode === "ledger" && (
+        <Card
+          title="Ledger-only"
+          desc="Informal groups use the free ledger-only plan. Members pay cash or transfer, and officers record it."
+        >
+          <p className="text-sm text-slate-600">
+            No payment provider needed. To collect automatically, register your
+            group as a cooperative or business and contact support to change
+            your organisation type.
+          </p>
+        </Card>
+      )}
+
+      {tab === "rails" && showRailsSetup && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-bold">
+              {changingRails ? "Change payment provider" : "Connect payment rails"}
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm text-slate-600">
+              Members pay into account numbers on these rails, and every
+              payment is matched to them automatically.
+            </p>
+          </div>
+          {!verified && (
+            <p className="flex gap-3 rounded-xl bg-sky-50 p-4 text-sm text-sky-900">
+              <Info className="size-5 shrink-0" aria-hidden="true" />
+              <span>
+                {organisation?.kyb
+                  ? "Your verification is still in review. Connect now and your collection account number is issued the moment you're approved."
+                  : "You haven't verified your organisation yet. Connect now, then upload your documents from your profile to get your collection account number."}{" "}
+                {!organisation?.kyb && (
+                  <Link to="/profile" className="font-semibold underline">
+                    Go to profile
+                  </Link>
+                )}
+              </span>
+            </p>
+          )}
+          {moneyMode === "gateway" && (
+            <GatewayRails onReady={setReadyProvider} />
+          )}
+          {moneyMode === "bank" && <BankRails onReady={saveBankTicket} />}
+          {moneyMode === "gateway" && (
+            <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-6 sm:flex-row sm:justify-end">
+              {changingRails && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setChangingRails(false);
+                    setReadyProvider(null);
+                  }}
+                  className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-semibold hover:border-slate-400"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={saveGateway}
+                disabled={!readyProvider}
+                className="inline-flex min-h-11 items-center justify-center rounded-lg bg-emerald-700 px-5 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-50"
+              >
+                Save connection
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "rails" && rails?.mode === "bank" && !changingRails && (
+        <Card
+          title="Core banking integration"
+          desc="Member accounts are issued from your own books."
+        >
+          <p className="flex gap-2 text-sm">
+            <Clock className="size-4 shrink-0 translate-y-0.5 text-amber-600" />
+            Integration requested, ref {rails.ticket}. Our integration team
+            will contact you to finish the connection.
+          </p>
+        </Card>
+      )}
+
+      {tab === "rails" && provider && !changingRails && (
         <>
           <Card
             title="Connection"
@@ -666,19 +825,42 @@ export default function SettingsPage() {
                 <dt className="text-xs font-semibold text-slate-500">
                   Provider
                 </dt>
-                <dd className="mt-0.5 font-semibold">{ORG.provider}</dd>
+                <dd className="mt-0.5 font-semibold">{provider.name}</dd>
+                <dd>
+                  <button
+                    type="button"
+                    onClick={() => setChangingRails(true)}
+                    className="text-xs font-semibold text-emerald-700 hover:text-emerald-800"
+                  >
+                    Change provider
+                  </button>
+                </dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold text-slate-500">
                   Collection account
                 </dt>
-                <dd className="mt-0.5 font-mono font-semibold">
-                  {ORG.collectionAccount.replace(
-                    /(\d{4})(\d{3})(\d{3})/,
-                    "$1 $2 $3",
-                  )}
-                </dd>
-                <dd className="text-xs text-slate-500">{ORG.bank}</dd>
+                {verified ? (
+                  <>
+                    <dd className="mt-0.5 font-mono font-semibold">
+                      {COLLECTION.account.replace(
+                        /(\d{4})(\d{3})(\d{3})/,
+                        "$1 $2 $3",
+                      )}
+                    </dd>
+                    <dd className="text-xs text-slate-500">{COLLECTION.bank}</dd>
+                  </>
+                ) : (
+                  <dd className="mt-0.5 text-sm text-slate-600">
+                    Issued once your organisation is verified.{" "}
+                    <Link
+                      to="/profile"
+                      className="font-semibold text-emerald-700 hover:text-emerald-800"
+                    >
+                      {organisation?.kyb ? "View status" : "Upload documents"}
+                    </Link>
+                  </dd>
+                )}
               </div>
             </dl>
             <ul className="space-y-2 rounded-xl bg-slate-50 p-4">
@@ -723,8 +905,8 @@ export default function SettingsPage() {
             desc="Only the owner can do this. Keys are encrypted and never shown again after saving."
           >
             <Field
-              label={`New ${ORG.provider} secret key`}
-              hint="Starts with sk_live_"
+              label={`New ${provider.name} secret key`}
+              hint={provider.keyHint}
             >
               <div className="relative">
                 <input

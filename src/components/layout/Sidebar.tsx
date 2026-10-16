@@ -1,7 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Check, ChevronsLeft, ChevronsUpDown, Copy, X } from "lucide-react";
-import { NAV, organisation } from "../../lib/DashboardData";
+import { NAV, organisation as sampleOrg } from "../../lib/DashboardData";
+import { useOrganisation } from "../../lib/OrgStore";
+import { ORG_TYPES } from "../../types/types";
 
 interface SidebarProps {
   collapsed: boolean; // desktop icon-only mode
@@ -30,6 +32,12 @@ export default function Sidebar({
 }: SidebarProps) {
   const { pathname } = useLocation();
   const [copied, setCopied] = useState(false);
+  const { organisation: org } = useOrganisation();
+  const organisation = {
+    ...sampleOrg,
+    name: org?.name ?? sampleOrg.name,
+    type: ORG_TYPES.find((t) => t.value === org?.type)?.title ?? sampleOrg.type,
+  };
   const { collectionAccount } = organisation;
 
   // On mobile the drawer always shows labels

@@ -115,7 +115,8 @@ export default function OrganisationStep({ value, onChange, onSubmit }: Props) {
           Organisation type
         </h3>
         <p className="mt-1 text-sm text-slate-500">
-          This decides which documents we ask for during verification.
+          This decides which documents we ask for when you verify your
+          organisation from your profile.
         </p>
         <div
           role="radiogroup"
@@ -198,7 +199,7 @@ export default function OrganisationStep({ value, onChange, onSubmit }: Props) {
           className={btnPrimary}
         >
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          {submitting ? "Creating…" : "Continue"}
+          {submitting ? "Creating…" : "Continue to dashboard"}
           {!submitting && <ArrowRight className="size-4" />}
         </button>
       </div>

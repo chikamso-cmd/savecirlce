@@ -20,6 +20,7 @@ import ReconciliationPage from "./pages/Reconciliationpage";
 import SettingsPage from "./pages/Settingspage";
 import TeamPage from "./pages/Teamspage";
 import ReportsPage from "./pages/Reportspage";
+import ProfilePage from "./pages/Profilepage";
 // import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 // import ResetPasswordPage from "./pages/forgotpassword/Resetpasswordpage";
@@ -61,6 +62,7 @@ export default function App() {
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/team" element={<TeamPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         {/* </Route> */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

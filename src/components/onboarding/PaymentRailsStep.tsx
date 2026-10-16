@@ -63,7 +63,11 @@ const PROVIDERS: {
   },
 ];
 
-function GatewayRails({ onReady }: { onReady: (p: Provider | null) => void }) {
+export function GatewayRails({
+  onReady,
+}: {
+  onReady: (p: Provider | null) => void;
+}) {
   const [provider, setProvider] = useState<Provider>("paystack");
   const [secretKey, setSecretKey] = useState("");
   const [showKey, setShowKey] = useState(false);
@@ -277,7 +281,11 @@ function GatewayRails({ onReady }: { onReady: (p: Provider | null) => void }) {
   );
 }
 
-function BankRails({ onReady }: { onReady: (ticket: string | null) => void }) {
+export function BankRails({
+  onReady,
+}: {
+  onReady: (ticket: string | null) => void;
+}) {
   const [form, setForm] = useState({
     contactName: "",
     email: "",

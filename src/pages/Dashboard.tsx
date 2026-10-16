@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { ArrowRight, CheckCircle2, Circle, Plus } from "lucide-react";
 import ExportButton from "../components/widgets/ExportButton";
+import { useOrganisation } from "../lib/OrgStore";
+import { moneyModeFor } from "../types/types";
 import {
   CashInHand,
   CollectionsChart,
@@ -10,6 +12,75 @@ import {
   StatCards,
   WithdrawalsDue,
 } from "../components/widgets/DashboardWidgets";
+
+// Onboarding only asks for name and type, so nudge the owner to finish the rest
+function FinishSetup() {
+  const { organisation } = useOrganisation();
+  if (!organisation) return null;
+
+  const steps = [
+    {
+      label: "Verify your organisation",
+      detail: "Upload your documents from your profile.",
+      done: !!organisation.kyb,
+      href: "/profile",
+    },
+    ...(moneyModeFor(organisation.type) === "ledger"
+      ? []
+      : [
+          {
+            label: "Connect payment rails",
+            detail: "Link Paystack or Flutterwave in Settings.",
+            done: !!organisation.rails,
+            href: "/settings?tab=rails",
+          },
+        ]),
+  ];
+  if (steps.every((s) => s.done)) return null;
+
+  return (
+    <section className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:p-6">
+      <h2 className="font-bold text-emerald-900">Finish setting up</h2>
+      <p className="mt-1 text-sm text-emerald-900/80">
+        You can use SaveCircle now. Complete these to start collecting payments
+        automatically.
+      </p>
+      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {steps.map((s) => (
+          <li key={s.href}>
+            <Link
+              to={s.href}
+              className="flex min-h-14 items-center gap-3 rounded-xl border border-emerald-200 bg-white p-3 hover:border-emerald-600"
+            >
+              {s.done ? (
+                <CheckCircle2
+                  className="size-5 shrink-0 text-emerald-600"
+                  aria-label="Done"
+                />
+              ) : (
+                <Circle
+                  className="size-5 shrink-0 text-slate-400"
+                  aria-label="To do"
+                />
+              )}
+              <span className="min-w-0 flex-1">
+                <span
+                  className={`block text-sm font-semibold ${s.done ? "text-slate-500 line-through" : ""}`}
+                >
+                  {s.label}
+                </span>
+                <span className="block text-xs text-slate-500">{s.detail}</span>
+              </span>
+              {!s.done && (
+                <ArrowRight className="size-4 shrink-0 text-emerald-700" />
+              )}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 
 export default function DashboardPage() {
   useEffect(() => {
@@ -37,6 +108,8 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      <FinishSetup />
 
       <StatCards />
 

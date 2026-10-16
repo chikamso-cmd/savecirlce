@@ -109,8 +109,8 @@ interface LayoutProps {
   title: string;
   description: string;
   tagline: [string, string];
-  statuses: StepStatus[];
-  onSaveLater: () => void;
+  statuses?: StepStatus[]; // omit to hide the stepper
+  onSaveLater?: () => void;
   illustrationSrc?: string; // reuse the illustrations from your MVP
   children: ReactNode;
 }
@@ -168,19 +168,23 @@ export default function OnboardingLayout({
           <div>
            <ThemeToggleButton />
           </div>
-          <div className="mb-4 flex justify-end lg:mb-8">
-            <button
-              type="button"
-              onClick={onSaveLater}
-              className="inline-flex min-h-11 items-center gap-2 text-sm font-medium  hover:text-emerald-700"
-            >
-              <History className="size-4" aria-hidden="true" />
-              Save and continue later
-            </button>
-          </div>
+          {onSaveLater && (
+            <div className="mb-4 flex justify-end lg:mb-8">
+              <button
+                type="button"
+                onClick={onSaveLater}
+                className="inline-flex min-h-11 items-center gap-2 text-sm font-medium  hover:text-emerald-700"
+              >
+                <History className="size-4" aria-hidden="true" />
+                Save and continue later
+              </button>
+            </div>
+          )}
         </div>
-        <Stepper statuses={statuses} />
-        <div className="mt-8 sm:mt-10">{children}</div>
+        {statuses && <Stepper statuses={statuses} />}
+        <div className={statuses ? "mt-8 sm:mt-10" : "mt-4 sm:mt-8"}>
+          {children}
+        </div>
       </main>
     </div>
   );

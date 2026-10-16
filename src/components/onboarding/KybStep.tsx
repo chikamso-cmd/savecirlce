@@ -19,6 +19,7 @@ import {
   // BANKS,
   MAX_FILE_BYTES,
   documentsFor,
+  formatSize,
   type DocSlot,
   type KybData,
   type OrgType,
@@ -32,12 +33,7 @@ interface Props {
   onSubmit: () => Promise<void>;
 }
 
-const formatSize = (b: number) =>
-  b < 1024 * 1024
-    ? `${Math.round(b / 1024)} KB`
-    : `${(b / 1024 / 1024).toFixed(1)} MB`;
-
-function DocUploadCard({
+export function DocUploadCard({
   slot,
   file,
   onFile,

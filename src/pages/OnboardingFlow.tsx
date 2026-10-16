@@ -1,326 +1,42 @@
-import { useEffect, useState } from "react";
-import { CheckCircle2 } from "lucide-react";
-import { createOrganisation, submitKyb } from "../services/Api";
-import KybStep from "../components/onboarding/KybStep";
+import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { createOrganisation } from "../services/Api";
 import OnboardingLayout from "../components/onboarding/OnboardingLayout";
 import OrganisationStep from "../components/onboarding/OrganisationStep";
-import PaymentRailsStep from "../components/onboarding/PaymentRailsStep";
-import VerificationPending from "../components/onboarding/VerificationPending";
-import {
-  emptyKyb,
-  type KybData,
-  type KybStatus,
-  type OrgDetails,
-  type StepStatus,
+import { useOrganisation } from "../lib/OrgStore";
+import type { OrgDetails } from "../types/types";
 
-} from "../types/types";
-import SetupStep from "../components/onboarding/Setup";
-import { useNavigate } from "react-router-dom";
-
-type Screen = "org" | "kyb" | "pending" | "rails" | "setup" | "done";
-
-interface Props {
-  onGoToDashboard?: () => void;
-  onCreateGroup?: () => void;
-  onInviteTeam?: () => void;
-  onComplete?: () => void; // → Setup & Complete (step 4)
-}
-
-const DRAFT_KEY = "savecircle:onboarding-draft";
-
-const ASIDE: Record<
-  Screen,
-  {
-    badge: string;
-    title: string;
-    description: string;
-    tagline: [string, string];
-  }
-> = {
-  org: {
-    badge: "Organisation onboarding",
-    title: "Let's set up your organisation",
-    description:
-      "Tell us who you are. You can stop after any step and pick up where you left off.",
-    tagline: ["Save together.", "Grow together."],
-  },
-  kyb: {
-    badge: "Organisation onboarding",
-    title: "Let's verify your organisation",
-    description:
-      "This keeps your platform secure and compliant. You need a few documents and basic details about your organisation and key people.",
-    tagline: ["Trusted records.", "Stronger communities."],
-  },
-  pending: {
-    badge: "Organisation onboarding",
-    title: "We're reviewing your documents",
-    description:
-      "You don't need to wait here. Keep setting up; everything you do now carries over once you're approved.",
-    tagline: ["Set up now.", "Go live when approved."],
-  },
-  rails: {
-    badge: "Connect payment rails",
-    title: "Secure & reliable payment rails",
-    description:
-      "Connect your payment provider so members can pay easily and contributions reconcile automatically.",
-    tagline: ["More options.", "More flexibility."],
-  },
-  setup: {
-    badge: "Organisation onboarding",
-    title: "Almost there",
-    description:
-      "A few more details to set up your account, your team and first group",
-    tagline: ["Better systems.", "Stronger savings."],
-  },
-  done: {
-    badge: "Organisation onboarding",
-    title: "You're all set",
-    description:
-      "Your organisation is ready. Everything you set here can be changed later in settings.",
-    tagline: ["Save together.", "Grow together."],
-  },
-};
-
-export default function OnboardingFlow({
-  onGoToDashboard,
-  onCreateGroup,
-  onInviteTeam,
-  onComplete,
-}: Props) {
-  const [screen, setScreen] = useState<Screen>("org");
-  const [org, setOrg] = useState<OrgDetails>({ name: "", type: null });
-  const [organisationId, setOrganisationId] = useState<string | null>(null);
-  const orgType = org.type;
-  const [kyb, setKyb] = useState<KybData>(emptyKyb);
-  const [summary, setSummary] = useState<{
-    invites: number;
-    groupName: string | null;
-  } | null>(null);
-  const [submission, setSubmission] = useState<{
-    reference: string;
-    submittedAt: string;
-  } | null>(null);
-  const [kybStatus, setKybStatus] = useState<KybStatus>("in_review");
-  const [toast, setToast] = useState<string | null>(null);
+// Fast onboarding: name and type only. Verification documents are uploaded
+// from the profile page, and payment rails are connected in Settings.
+export default function OnboardingFlow() {
   const navigate = useNavigate();
+  const { organisation, saveOrganisation } = useOrganisation();
+  const [org, setOrg] = useState<OrgDetails>({ name: "", type: null });
 
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(t);
-  }, [toast]);
-
-  // Restore non-file progress. Files can't live in localStorage; the real version should load the draft from your API.
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(DRAFT_KEY);
-      if (!raw) return;
-      const draft = JSON.parse(raw);
-      if (draft.org) setOrg(draft.org);
-      if (draft.organisationId && draft.org?.type) {
-        setOrganisationId(draft.organisationId);
-        setScreen("kyb");
-      }
-      if (draft.submission) {
-        setSubmission(draft.submission);
-        setScreen(draft.screen === "kyb" ? "pending" : draft.screen);
-      }
-      // if (draft.directors?.length)
-      //   setKyb((k) => ({
-      //     ...k,
-      //     directors: draft.directors,
-      //     settlement: draft.settlement ?? k.settlement,
-      //   }));
-    } catch {
-      /* ignore a corrupt draft */
-    }
-  }, []);
-
-  const saveLater = () => {
-    try {
-      localStorage.setItem(
-        DRAFT_KEY,
-        JSON.stringify({
-          screen,
-          org,
-          organisationId,
-          submission,
-          // directors: kyb.directors,
-          // settlement: kyb.settlement,
-        }),
-      );
-      setToast("Progress saved. Pick up where you left off any time.");
-    } catch {
-      setToast(
-        "Couldn't save on this device. Check your browser storage settings.",
-      );
-    }
-  };
-
-  const go = (next: Screen) => {
-    setScreen(next);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const statuses: StepStatus[] =
-    screen === "org"
-      ? ["current", "upcoming", "upcoming", "upcoming"]
-      : screen === "kyb"
-        ? ["done", "current", "upcoming", "upcoming"]
-        : screen === "pending"
-          ? ["done", "review", "upcoming", "upcoming"]
-          : [
-              "done",
-              kybStatus === "approved" ? "done" : "review",
-              "current",
-              "upcoming",
-            ];
-
-  const notReady = (what: string) => () =>
-    setToast(`${what} isn't wired up yet.`);
+  // Already onboarded: nothing to do here
+  if (organisation) return <Navigate to="/dashboard" replace />;
 
   return (
-    <>
-      <OnboardingLayout
-        {...ASIDE[screen]}
-        statuses={statuses}
-        onSaveLater={saveLater}
-      >
-        {screen === "org" && (
-          <OrganisationStep
-            value={org}
-            onChange={setOrg}
-            onSubmit={async () => {
-              // Real version: update the existing organisation instead of skipping
-              if (!organisationId && org.type) {
-                const res = await createOrganisation({
-                  name: org.name.trim(),
-                  type: org.type,
-                });
-                setOrganisationId(res.organisationId);
-              }
-              go("kyb");
-            }}
-          />
-        )}
-
-        {screen === "kyb" && orgType && (
-          <KybStep
-            orgType={orgType}
-            value={kyb}
-            onChange={setKyb}
-            onBack={() => go("org")}
-            onSubmit={async () => {
-              const res = await submitKyb(kyb);
-              setSubmission(res);
-              setKybStatus("in_review");
-              go("pending");
-            }}
-          />
-        )}
-
-        {screen === "pending" && submission && orgType && (
-          <VerificationPending
-            orgType={orgType}
-            kyb={kyb}
-            reference={submission.reference}
-            submittedAt={submission.submittedAt}
-            onEditDocuments={() => go("kyb")}
-            onContinue={() => go("rails")}
-            onApproved={() => {
-              setKybStatus("approved");
-              setToast("Verification approved.");
-            }}
-            onGoToDashboard={onGoToDashboard ?? notReady("Dashboard")}
-            onCreateGroup={onCreateGroup ?? notReady("Group creation")}
-            onInviteTeam={onInviteTeam ?? notReady("Team invites")}
-          />
-        )}
-
-        {screen === "rails" && orgType && (
-          <PaymentRailsStep
-            orgType={orgType}
-            kybStatus={kybStatus}
-            onBack={() => go(submission ? "pending" : "kyb")}
-            onContinue={() => {
-              setToast("Payment rails connected.");
-              onComplete?.();
-              go("setup");
-            }}
-          />
-        )}
-
-        {screen === "setup" && (
-          <SetupStep
-            // moneyMode={moneyMode}
-            // kybStatus={kybStatus}
-            onBack={() => go("rails")}
-            onComplete={(s) => {
-              setSummary(s);
-              localStorage.removeItem(DRAFT_KEY);
-              go("done");
-            }}
-          />
-        )}
-
-        {screen === "done" && (
-          <div className="mx-auto max-w-xl py-6 text-center">
-            <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-100">
-              <CheckCircle2
-                className="size-9 text-emerald-700"
-                aria-hidden="true"
-              />
-            </span>
-            <h2 className="mt-5 text-2xl font-extrabold tracking-tight sm:text-3xl">
-              Your organisation is ready
-            </h2>
-            <ul className="mx-auto mt-6 max-w-sm space-y-2 text-left text-sm">
-              <li className="flex gap-2 ">
-                <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />{" "}
-                Policies saved
-              </li>
-              <li className="flex gap-2">
-                <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />
-                {summary?.invites
-                  ? `${summary.invites} team invite${summary.invites > 1 ? "s" : ""} sent`
-                  : "No team invites yet, add them from Team & roles"}
-              </li>
-              <li className="flex gap-2">
-                <CheckCircle2 className="size-4 shrink-0 translate-y-0.5 text-emerald-600" />
-                {summary?.groupName
-                  ? `${summary.groupName} created, add members next`
-                  : "No group yet, create one from Groups"}
-              </li>
-              {kybStatus !== "approved" && (
-                <li className="flex gap-2 text-amber-800">
-                  <span aria-hidden="true">⏳</span> Verification still in
-                  review; your account number arrives by SMS once approved
-                </li>
-              )}
-            </ul>
-            <button
-              type="button"
-              onClick={() => navigate("/Dashboard")}
-              className="mt-8 inline-flex min-h-12 items-center justify-center rounded-lg bg-emerald-700 px-8 text-sm font-bold text-white hover:bg-emerald-800"
-            >
-              Go to dashboard
-            </button>
-          </div>
-        )}
-      </OnboardingLayout>
-
-      {toast && (
-        <div
-          role="status"
-          className="fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-md items-center gap-3 rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-lg sm:inset-x-auto sm:right-6"
-        >
-          <CheckCircle2
-            className="size-5 shrink-0 text-emerald-400"
-            aria-hidden="true"
-          />
-          {toast}
-        </div>
-      )}
-    </>
+    <OnboardingLayout
+      badge="Organisation onboarding"
+      title="Let's set up your organisation"
+      description="Just a name and type to get you started. You can verify your organisation and connect payments later."
+      tagline={["Save together.", "Grow together."]}
+    >
+      <OrganisationStep
+        value={org}
+        onChange={setOrg}
+        onSubmit={async () => {
+          if (!org.type) return;
+          const name = org.name.trim();
+          const { organisationId } = await createOrganisation({
+            name,
+            type: org.type,
+          });
+          saveOrganisation({ id: organisationId, name, type: org.type });
+          navigate("/dashboard", { replace: true });
+        }}
+      />
+    </OnboardingLayout>
   );
 }
