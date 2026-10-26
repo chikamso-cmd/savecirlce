@@ -23,10 +23,8 @@ import ReportsPage from "./pages/Reportspage";
 import ProfilePage from "./pages/Profilepage";
 // import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
-// import ResetPasswordPage from "./pages/forgotpassword/Resetpasswordpage";
 import VerifyOtpPage from "./pages/forgotpassword/Verifyotppag";
 import Verifyotp from "./components/auth/Verifyotp";
-// import ForgotPasswordPage from "./pages/forgotpassword/Forgotpasswordpage";
 
 export default function App() {
   return (
@@ -35,41 +33,34 @@ export default function App() {
         <Route path="/" element={<SaveCircleSplash />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/signup" element={<SignUpScreen />} />
-        {/* <Route path="/forgot-password" element={<ForgotPasswordPage />} /> */}
         <Route path="/signup/verify" element={<Verifyotp />} />
-        <Route path="/verify" element={<VerifyOtpPage />} />
-        {/* <Route path="/reset-password" element={<ResetPasswordPage />} /> */}
+        <Route path="/verify" element={<VerifyOtpPage />} />\
         {/* <Route element={<ProtectedRoute />}> */}
-          <Route path="/onboarding" element={<OnboardingFlow />} />
-          <Route element={<DashboardLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/groups" element={<GroupsPage />} />
-            <Route path="/groups/new" element={<CreateGroupPage />} />
-            <Route path="/groups/:id" element={<GroupDetailsPage />} />
-            <Route path="/members" element={<MembersPage />} />
-            <Route path="/payments" element={<PaymentsPage />} />
-            <Route path="/payments/:id" element={<PaymentDetailsPage />} />
-            <Route path="/unmatched" element={<UnmatchedPage />} />
-            <Route path="/unmatched/:id" element={<UnmatchedDetailsPage />} />
-            <Route path="/withdrawals" element={<WithdrawalsPage />} />
-            <Route
-              path="/withdrawals/:id"
-              element={<WithdrawalDetailsPage />}
-            />
-            <Route path="/cash" element={<CashPage />} />
-            <Route path="/cash/:id" element={<CashDetailsPage />} />
-            <Route path="/reconciliation" element={<ReconciliationPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/team" element={<TeamPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-          </Route>
+        <Route path="/onboarding" element={<OnboardingFlow />} />
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/groups" element={<GroupsPage />} />
+          <Route path="/groups/new" element={<CreateGroupPage />} />
+          <Route path="/groups/:id" element={<GroupDetailsPage />} />
+          <Route path="/members" element={<MembersPage />} />
+          <Route path="/payments" element={<PaymentsPage />} />
+          <Route path="/payments/:id" element={<PaymentDetailsPage />} />
+          <Route path="/unmatched" element={<UnmatchedPage />} />
+          <Route path="/unmatched/:id" element={<UnmatchedDetailsPage />} />
+          <Route path="/withdrawals" element={<WithdrawalsPage />} />
+          <Route path="/withdrawals/:id" element={<WithdrawalDetailsPage />} />
+          <Route path="/cash" element={<CashPage />} />
+          <Route path="/cash/:id" element={<CashDetailsPage />} />
+          <Route path="/reconciliation" element={<ReconciliationPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/team" element={<TeamPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
         {/* </Route> */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
       <ToastContainer autoClose={3000} position="top-right" />
     </BrowserRouter>
-
-    // <AuthPage />
   );
 }

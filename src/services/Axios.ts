@@ -7,10 +7,10 @@ import axios, {
 } from "axios";
 
 const TOKEN_KEY = "savecircle:token";
-const SESSION_KEY = "savecircle:session";
+// const SESSION_KEY = "savecircle:session";
 
 export const API_URL =
-  (import.meta.env.VITE_API_URL as string | undefined) ??
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
   "http://localhost:4000/api";
 
 // Access token lives in localStorage; the refresh token is an httpOnly cookie set by the API
@@ -32,7 +32,7 @@ export const tokenStore = {
   clear() {
     try {
       localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(SESSION_KEY);
+      // localStorage.removeItem(SESSION_KEY);
     } catch {
       /* nothing to clear */
     }

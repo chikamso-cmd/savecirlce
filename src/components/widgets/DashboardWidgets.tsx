@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
 import { CheckCircle2 } from "lucide-react";
 import {
+  CollectionsLegend,
+  CollectionsLineChart,
+} from "./CollectionsLineChart";
+import {
   attention,
   collections,
   officers,
@@ -109,54 +113,13 @@ export function StatCards() {
 }
 
 export function CollectionsChart() {
-  const max = Math.max(...collections.map((d) => d.transfer + d.cash));
   return (
-    <Card
-      title="Collections, last 14 days"
-      action={
-        <div className="flex gap-4 text-xs text-slate-600">
-          <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-emerald-700" /> Transfer
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-emerald-200" /> Cash
-          </span>
-        </div>
-      }
-    >
-      <div className="overflow-x-auto">
-        <div className="min-w-[120px]">
-          <ul className="flex h-48 items-end gap-1.5 border-b border-slate-200 sm:gap-2.5">
-            {collections.map((d) => (
-              <li
-                key={d.day}
-                className="flex h-full flex-1 flex-col justify-end gap-0.5"
-                title={`${d.day}: ₦${d.transfer}k transfer, ₦${d.cash}k cash`}
-              >
-                <span className="sr-only">{`${d.day}: ₦${d.transfer},000 by transfer and ₦${d.cash},000 in cash`}</span>
-                <span
-                  className="rounded-t bg-emerald-200"
-                  style={{ height: `${(d.cash / max) * 100}%` }}
-                />
-                <span
-                  className="rounded-sm bg-emerald-700"
-                  style={{ height: `${(d.transfer / max) * 100}%` }}
-                />
-              </li>
-            ))}
-          </ul>
-          <div className="mt-2 flex gap-1.5 sm:gap-2.5" aria-hidden="true">
-            {collections.map((d) => (
-              <span
-                key={d.day}
-                className="flex-1 text-center text-[11px] text-slate-500"
-              >
-                {d.day.split(" ")[0]}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
+    <Card title="Collections, last 14 days" action={<CollectionsLegend />}>
+      <CollectionsLineChart
+        points={collections.map((d) => ({ ...d, label: d.day }))}
+        description="over the last 14 days"
+        tickLabel={(p) => p.label.split(" ")[0]}
+      />
     </Card>
   );
 }

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2, Download, FileText, Loader2 } from "lucide-react";
+import {
+  CollectionsLegend,
+  CollectionsLineChart,
+} from "../components/widgets/CollectionsLineChart";
 
 // Reports from v4 §7.1 (exports) and the pilot success metrics in §10.3.
 // Sample figures; replace with GET /reports?period=
@@ -143,7 +147,6 @@ export default function ReportsPage() {
   }, [toast]);
 
   const m = DATA[period];
-  const max = Math.max(...m.weeks.map((w) => w.transfer + w.cash));
 
   // TODO: GET /reports/:id/export?period= (server builds the real file)
   const exportReport = async (id: string, title: string, extra?: string) => {
@@ -258,44 +261,13 @@ export default function ReportsPage() {
       <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-bold">Collections, {PERIOD_LABEL[period]}</h2>
-          <div className="flex gap-4 text-xs text-slate-600">
-            <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-sm bg-emerald-700" /> Transfer
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-sm bg-emerald-200" /> Cash
-            </span>
-          </div>
+          <CollectionsLegend />
         </div>
-        <ul className="mt-5 flex h-48 items-end gap-3 border-b border-slate-200 sm:gap-6">
-          {m.weeks.map((w) => (
-            <li
-              key={w.label}
-              className="flex h-full flex-1 flex-col justify-end gap-0.5"
-              title={`${w.label}: ${naira(w.transfer * 1000)} transfer, ${naira(w.cash * 1000)} cash`}
-            >
-              <span className="sr-only">{`${w.label}: ${naira(w.transfer * 1000)} by transfer, ${naira(w.cash * 1000)} cash`}</span>
-              <span
-                className="rounded-t bg-emerald-200"
-                style={{ height: `${(w.cash / max) * 100}%` }}
-              />
-              <span
-                className="rounded-sm bg-emerald-700"
-                style={{ height: `${(w.transfer / max) * 100}%` }}
-              />
-            </li>
-          ))}
-        </ul>
-        <div className="mt-2 flex gap-3 sm:gap-6" aria-hidden="true">
-          {m.weeks.map((w) => (
-            <span
-              key={w.label}
-              className="flex-1 text-center text-xs text-slate-500"
-            >
-              {w.label}
-            </span>
-          ))}
-        </div>
+        <CollectionsLineChart
+          points={m.weeks}
+          description={PERIOD_LABEL[period]}
+          className="mt-5 h-64"
+        />
       </section>
 
       <section className="space-y-3">

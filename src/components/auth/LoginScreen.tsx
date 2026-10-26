@@ -3,32 +3,24 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {
   AlertCircle,
-  // ArrowLeft,
   ArrowRight,
   ChartNoAxesCombined,
   Loader2,
-  // MessageSquareText,
   ShieldCheck,
   UserRound,
   UsersRound,
   Loader,
 } from "lucide-react";
-// import { useTheme } from "../../contexts/useTheme";
 import loginImage from "../../assets/images/login.jpg";
-import {
-  // sendSignupOtp,
-  signInWithGoogle,
-  // signInWithPassword,
-  // verifySignupOtp,
-  type AuthSession,
-} from "../../services/Api";
+import { signInWithGoogle, type AuthSession } from "../../services/Api";
 import { preloadGoogle, requestGoogleCode } from "../../services/googleAuth";
-import {  tokenStore } from "../../services/Axios";
+import { api, tokenStore } from "../../services/Axios";
 import { toast } from "react-toastify";
 import { ThemeToggleButton } from "../../contexts/ThemeProvider";
 import { getOrganisation } from "../../lib/OrgStore";
+import { Turnstile } from "@marsidev/react-turnstile";
 
-const SESSION_KEY = "savecircle:session";
+// const SESSION_KEY = "savecircle:session";
 
 const fieldClass =
   "h-11 w-full rounded-lg border border-[#dce5eb] pl-10 pr-3.5 text-sm text-[#173b4b] outline-none placeholder:text-[#8a9dad] focus:border-[#087f5b] focus:ring-2 focus:ring-[#087f5b]/15";
@@ -36,16 +28,12 @@ const labelClass = "mb-2 block text-xs font-semibold text-[#61778a]";
 const primaryBtn =
   "mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#07835e] text-sm font-bold text-white transition-colors hover:bg-[#066c4f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087f5b] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
 
-// Accepts 0803…, 803… or +234803…; returns +234XXXXXXXXXX or null
 function normalizeNgPhone(input: string): string | null {
   let digits = input.replace(/\D/g, "");
   if (digits.startsWith("234")) digits = digits.slice(3);
   if (digits.startsWith("0")) digits = digits.slice(1);
   return /^[789]\d{9}$/.test(digits) ? `+234${digits}` : null;
 }
-
-// const maskPhone = (e164: string) =>
-//   `${e164.slice(0, 4)} ${e164.slice(4, 7)} *** ${e164.slice(-4)}`;
 
 function ErrorText({ children }: { children: string }) {
   return (
@@ -59,10 +47,10 @@ function ErrorText({ children }: { children: string }) {
   );
 }
 
-function saveSession({ user, accessToken }: AuthSession) {
+function saveSession({  accessToken }: AuthSession) {
   tokenStore.set(accessToken);
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    // localStorage.setItem(SESSION_KEY, JSON.stringify(user));
   } catch {
     /* storage blocked; the session still works for this visit */
   }
@@ -133,6 +121,7 @@ function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [busy, setBusy] = useState(false);
   const [phoneInput, setPhoneInput] = useState<string>("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   // const [password, setPassword] = useState<string>();
   const [error, setError] = useState("");
   // const afterLogin = useAfterLogin();
@@ -149,7 +138,16 @@ function LoginForm() {
       setError("Please enter phone number to continue");
       return;
     }
+    if (!turnstileToken) {
+      alert("Please complete the security verification.");
+      return;
+    }
     try {
+      const payload = {
+        phoneInput,
+        turnstileToken,
+      };
+      await api.post(``, payload);
       navigate(`/verify`);
       setTimeout(() => {
         setError("");
@@ -190,36 +188,6 @@ function LoginForm() {
           />
         </div>
       </div>
-      {/* <div>
-        <label htmlFor="password" className={labelClass}>
-          Password
-        </label>
-        <div className="relative">
-          <LockKeyhole className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#557188]" />
-          <input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-            placeholder="Enter your password"
-            className={`${fieldClass} pr-11`}
-          />
-          <button
-            type="button"
-            aria-label={showPassword ? "Hide password" : "Show password"}
-            onClick={() => setShowPassword((visible) => !visible)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#61778a] hover:text-[#103b4a]"
-          >
-            {showPassword ? (
-              <EyeOff className="size-4" />
-            ) : (
-              <Eye className="size-4" />
-            )}
-          </button>
-        </div> */}
       {/* </div> */}
       <div className="flex items-center justify-between gap-3 text-xs">
         <label className="flex items-center gap-2 ">
@@ -240,6 +208,16 @@ function LoginForm() {
         </button> */}
       </div>
       {error && <ErrorText>{error}</ErrorText>}
+      {/* cloudflare ui */}
+      <div className="my-4">
+        <Turnstile
+          siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+          onSuccess={(token) => setTurnstileToken(token)}
+          onExpire={() => setTurnstileToken(null)}
+          onError={() => setTurnstileToken(null)}
+        />
+      </div>
+
       <button type="submit" disabled={busy} className={primaryBtn}>
         {busy ? (
           <div className="flex items-center gap-4 justify-cente">
@@ -268,11 +246,10 @@ function SignUpForm({
   const [phoneInput, setPhoneInput] = useState<string>("");
   const [agreed, setAgreed] = useState(false);
   const [attempted, setAttempted] = useState(false);
-  // const [phone, setPhone] = useState<string | null>(null);
-  // const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -290,22 +267,6 @@ function SignUpForm({
     terms: agreed ? null : "Agree to the terms to continue.",
   };
 
-  // const sendCode = async (to: string) => {
-  //   setBusy(true);
-  //   setError(null);
-  //   try {
-  //     const res = await api.post(``);
-  //     console.log(res);
-  //     // setPhone(to);
-  //     // setCode("");
-  //     setResendIn(60);
-  //   } catch (e) {
-  //     setError((e as Error).message);
-  //   } finally {
-  //     setBusy(false);
-  //   }
-  // };
-  
   const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
@@ -323,6 +284,10 @@ function SignUpForm({
       setError("please agree to the terms of use to continue!");
       return null;
     }
+    if (!turnstileToken) {
+      alert("Please complete the security verification.");
+      return;
+    }
     try {
       setBusy(true);
       setTimeout(() => {
@@ -333,10 +298,11 @@ function SignUpForm({
       const payload = {
         phoneInput,
         full_Name,
+        turnstileToken,
       };
       // await api.post(``, payload);
       setAttempted(true);
-      sessionStorage.setItem("phone", phoneInput)
+      sessionStorage.setItem("phone", phoneInput);
       console.log("btn clicked", payload);
       navigate("/signup/verify");
     } catch (err: any) {
@@ -345,98 +311,6 @@ function SignUpForm({
       setBusy(false);
     }
   };
-  // const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   if (!phone) return;
-  //   setBusy(true);
-  //   setError(null);
-  //   try {
-  //     const payload = {
-  //       phoneInput,
-  //       full_Name,
-  //       code,
-  //     };
-  //     // await api.post(``, payload);
-  //     console.log;
-  //     afterLogin();
-  //   } catch (e) {
-  //     setError((e as Error).message);
-  //   } finally {
-  //     setBusy(false);
-  //   }
-  // };
-
-  // if (stage === "otp" && phone) {
-  //   return (
-  //     <form onSubmit={handleVerify} className="mt-8 space-y-5">
-  //       <p className="rounded-lg border border-[#cce9dc] bg-[#f1faf5] p-3 text-sm text-[#075c43]">
-  //         Code sent to <span className="font-semibold">{maskPhone(phone)}</span>
-  //       </p>
-  //       <div>
-  //         <label htmlFor="otp" className={labelClass}>
-  //           6-digit code
-  //         </label>
-  //         <div className="relative">
-  //           <MessageSquareText className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#557188]" />
-  //           <input
-  //             id="otp"
-  //             name="otp"
-  //             inputMode="numeric"
-  //             autoComplete="one-time-code"
-  //             autoFocus
-  //             maxLength={6}
-  //             value={code}
-  //             onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-  //             placeholder="••••••"
-  //             className={`${fieldClass} tracking-[0.5em]`}
-  //           />
-  //         </div>
-  //         {error && <ErrorText>{error}</ErrorText>}
-  //       </div>
-
-  //       <button
-  //         type="submit"
-  //         disabled={busy || code.length !== 6}
-  //         className={primaryBtn}
-  //       >
-  //         {busy ? (
-  //           <Loader2 className="size-4 animate-spin" />
-  //         ) : (
-  //           <>
-  //             Verify and continue <ArrowRight className="size-4" />
-  //           </>
-  //         )}
-  //       </button>
-
-  //       <div className="flex items-center justify-between gap-3 text-xs">
-  //         <button
-  //           type="button"
-  //           onClick={() => {
-  //             setError(null);
-  //             onStageChange("details");
-  //           }}
-  //           className="inline-flex items-center gap-1 font-semibold text-[#087f5b] hover:underline"
-  //         >
-  //           <ArrowLeft className="size-3.5" /> Change number
-  //         </button>
-  //         {resendIn > 0 ? (
-  //           <span className="text-[#61778a]" aria-live="polite">
-  //             Resend code in {resendIn}s
-  //           </span>
-  //         ) : (
-  //           <button
-  //             type="button"
-  //             disabled={busy}
-  //             onClick={() => sendCode(phone)}
-  //             className="font-semibold text-[#087f5b] hover:underline disabled:opacity-50"
-  //           >
-  //             Resend code
-  //           </button>
-  //         )}
-  //       </div>
-  //     </form>
-  //   );
-  // }
 
   return (
     <form onSubmit={handleSignup} noValidate className="mt-8 space-y-5">
@@ -518,6 +392,16 @@ function SignUpForm({
 
       {error && <ErrorText>{error}</ErrorText>}
 
+      {/* cloudflare ui */}
+      <div className="my-4">
+        <Turnstile
+          siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+          onSuccess={(token) => setTurnstileToken(token)}
+          onExpire={() => setTurnstileToken(null)}
+          onError={() => setTurnstileToken(null)}
+        />
+      </div>
+
       <button type="submit" disabled={busy} className={primaryBtn}>
         {busy ? (
           <Loader className="size-4 animate-spin" />
@@ -538,7 +422,6 @@ interface AuthFormProps {
 }
 const AuthForm = ({ mode }: AuthFormProps) => {
   const isSignup = mode === "signup";
-  // const { isDarkMode, toggleTheme } = useTheme();
   const [signupStage, setSignupStage] = useState<"details" | "otp">("details");
   const onOtp = isSignup && signupStage === "otp";
 
