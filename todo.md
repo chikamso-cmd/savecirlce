@@ -1,2 +1,3 @@
-
-
+1. to handle cash in hand, is by allowing customer that paid cash to a particular tresurer click on payment made by cash on their dashboard and enter the amount against the treasurers name so the system rcognises cash in hand that way.
+2. add a dashboard for users to be able to see summary of their payments, total amount saved, next payout, they should also be able to make changes to their profile.eg uploading of profile picture, changing of nmame etc.
+3. the dashboard should be dynamic to each user, if the user is from a registered business or a coporative they see the same thing meanwhile the users from an informal ajo group sees something differnt.
