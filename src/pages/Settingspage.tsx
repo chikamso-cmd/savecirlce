@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   AlertCircle,
   Check,
@@ -150,6 +150,9 @@ function Card({
 }
 
 export default function SettingsPage() {
+  const navigate = useNavigate();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
   const [params, setParams] = useSearchParams();
   const tabParam = params.get("tab") as Tab | null;
   const tab: Tab = tabParam && TAB_IDS.includes(tabParam) ? tabParam : "organisation";
@@ -422,6 +425,9 @@ export default function SettingsPage() {
                 className="size-5 accent-emerald-700"
               />
             </label>
+          </Card>
+          <Card title="Danger zone" desc="Permanently remove this organisation and its account data.">
+            <button type="button" onClick={() => { setDeleteConfirm(""); setDeleteOpen(true); }} className="inline-flex min-h-11 items-center rounded-lg border border-red-300 px-4 text-sm font-bold text-red-700 hover:bg-red-50">Delete account</button>
           </Card>
         </>
       )}
@@ -999,6 +1005,20 @@ export default function SettingsPage() {
                 {saving && <Loader2 className="size-4 animate-spin" />} Save
                 changes
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-900/40 p-4" role="dialog" aria-modal="true" aria-labelledby="delete-account-title">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h2 id="delete-account-title" className="text-xl font-extrabold text-red-700">Delete account?</h2>
+            <p className="mt-2 text-sm text-slate-600">This permanently removes your organisation account. Type <strong>DELETE</strong> to confirm.</p>
+            <input className={`${inputCls} mt-4`} value={deleteConfirm} onChange={(e) => setDeleteConfirm(e.target.value)} placeholder="DELETE" autoFocus />
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" onClick={() => setDeleteOpen(false)} className="min-h-11 rounded-lg border border-slate-300 px-4 text-sm font-semibold">Cancel</button>
+              <button type="button" disabled={deleteConfirm !== "DELETE"} onClick={() => { localStorage.removeItem("savecircle:session"); navigate("/login", { replace: true }); }} className="min-h-11 rounded-lg bg-red-600 px-4 text-sm font-bold text-white disabled:opacity-50">Delete account</button>
             </div>
           </div>
         </div>

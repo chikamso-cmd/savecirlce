@@ -13,7 +13,7 @@ export interface HelpTopic {
 
 // TODO: replace with your real support contacts
 export const SUPPORT = {
-  email: "support@example.com",
+  email: "savecircle8@gmail.com",
   hours: "Monday to Friday, 8am to 6pm WAT",
   replyTime: "within one working day",
 };

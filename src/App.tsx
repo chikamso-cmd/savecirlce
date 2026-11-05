@@ -21,6 +21,12 @@ import SettingsPage from "./pages/Settingspage";
 import TeamPage from "./pages/Teamspage";
 import ReportsPage from "./pages/Reportspage";
 import ProfilePage from "./pages/Profilepage";
+import MemberDetailsPage from "./pages/Memberdetailspage";
+// import AdminLoansPage from "./pages/AdminLoanspage";
+// import LoanDetailsPage from "./pages/Loandetailspage";
+// import MemberDashboard from "./pages/members-dashboard/MemberDashboard";
+// import MemberLoansPage from "./pages/members-dashboard/MemberLoansPage";
+// import MemberLayout from "./components/layout/MemberLayout";
 // import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import VerifyOtpPage from "./pages/forgotpassword/Verifyotppag";
@@ -37,12 +43,19 @@ export default function App() {
         <Route path="/verify" element={<VerifyOtpPage />} />\
         {/* <Route element={<ProtectedRoute />}> */}
         <Route path="/onboarding" element={<OnboardingFlow />} />
+        {/* <Route element={<MemberLayout />}>
+          <Route path="/member-dashboard" element={<MemberDashboard />} />
+          <Route path="/member-dashboard/loans" element={<MemberLoansPage />} />
+        </Route> */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/groups" element={<GroupsPage />} />
           <Route path="/groups/new" element={<CreateGroupPage />} />
           <Route path="/groups/:id" element={<GroupDetailsPage />} />
           <Route path="/members" element={<MembersPage />} />
+          <Route path="/members/:id" element={<MemberDetailsPage />} />
+          {/* <Route path="/loans" element={<AdminLoansPage />} />
+          <Route path="/loans/:id" element={<LoanDetailsPage />} /> */}
           <Route path="/payments" element={<PaymentsPage />} />
           <Route path="/payments/:id" element={<PaymentDetailsPage />} />
           <Route path="/unmatched" element={<UnmatchedPage />} />

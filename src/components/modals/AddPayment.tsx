@@ -37,6 +37,7 @@ export default function AddPaymentModal({
   const [group, setGroup] = useState("");
   const [amount, setAmount] = useState("");
   const [channel, setChannel] = useState<Channel>("cash");
+  const [treasurer, setTreasurer] = useState(recordedBy);
   const [openedAt] = useState(() => new Date());
   const [receivedAt, setReceivedAt] = useState(() => toLocalInput(openedAt));
   const [reference, setReference] = useState("");
@@ -80,7 +81,7 @@ export default function AddPaymentModal({
         receivedAt: when.toISOString(),
         reference: reference.trim(),
         note: note.trim(),
-        by: recordedBy,
+        by: channel === "cash" ? treasurer : recordedBy,
       });
       onCreated(p);
     } catch (e) {
@@ -139,6 +140,26 @@ export default function AddPaymentModal({
               ))}
             </div>
           </fieldset>
+
+          {channel === "cash" && (
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                Treasurer who received the cash
+              </span>
+              <select
+                className={inputCls}
+                value={treasurer}
+                onChange={(e) => setTreasurer(e.target.value)}
+              >
+                {[recordedBy, "[Officer 2]", "[Officer 3]"].map((name) => (
+                  <option key={name}>{name}</option>
+                ))}
+              </select>
+              <span className="mt-1 block text-xs text-slate-500">
+                This payment will be added to the selected treasurer's cash in hand.
+              </span>
+            </label>
+          )}
 
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-slate-700">

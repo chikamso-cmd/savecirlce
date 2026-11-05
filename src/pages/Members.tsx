@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   AlertCircle,
   Check,
@@ -10,6 +10,8 @@ import {
   Search,
   Send,
   ShieldCheck,
+  Trash2,
+  Pencil,
   Wallet,
   X,
 } from "lucide-react";
@@ -569,6 +571,7 @@ function MemberDrawer({
 // ---------- page ----------
 
 export default function MembersPage() {
+  const navigate = useNavigate();
   const [members, setMembers] = useState<Member[]>(SAMPLE);
   const [filter, setFilter] = useState<Filter>("all");
   const [group, setGroup] = useState("all");
@@ -778,7 +781,7 @@ export default function MembersPage() {
               <li key={m.id}>
                 <button
                   type="button"
-                  onClick={() => setSelectedId(m.id)}
+                  onClick={() => navigate(`/members/${m.id}`)}
                   className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left hover:border-emerald-600"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -824,13 +827,16 @@ export default function MembersPage() {
                   <th className="px-5 py-3 text-right font-semibold">
                     Arrears
                   </th>
+                  <th className="px-4 py-3 text-right font-semibold">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {visible.map((m) => (
                   <tr
                     key={m.id}
-                    onClick={() => setSelectedId(m.id)}
+                    onClick={() => navigate(`/members/${m.id}`)}
                     className={`cursor-pointer hover:bg-slate-50 ${m.active ? "" : "text-slate-400"}`}
                   >
                     <td className="px-5 py-3.5">
@@ -838,7 +844,7 @@ export default function MembersPage() {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedId(m.id);
+                          navigate(`/members/${m.id}`);
                         }}
                         className="flex items-center gap-3 text-left"
                       >
@@ -872,6 +878,56 @@ export default function MembersPage() {
                       className={`px-5 py-3.5 text-right font-bold ${m.arrears ? "text-amber-700" : "text-slate-400"}`}
                     >
                       {m.arrears ? naira(m.arrears) : "—"}
+                    </td>
+                    <td className="px-4 py-3.5 text-right">
+                      <div className="flex justify-end gap-1">
+                        <button
+                          type="button"
+                          aria-label={`Edit ${m.name}`}
+                          title="Edit member"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const name = window.prompt("Member name", m.name);
+                            if (name?.trim()) {
+                              const phone = window.prompt(
+                                "Phone number",
+                                m.phone,
+                              );
+                              update(m.id, {
+                                name: name.trim(),
+                                ...(phone?.trim()
+                                  ? { phone: phone.trim() }
+                                  : {}),
+                              });
+                              setToast("Member information updated.");
+                            }
+                          }}
+                          className="rounded-lg p-2 text-slate-500 hover:bg-emerald-50 hover:text-emerald-700"
+                        >
+                          <Pencil className="size-4" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Delete ${m.name}`}
+                          title="Delete member"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (
+                              window.confirm(
+                                `Delete ${m.name}? This cannot be undone.`,
+                              )
+                            ) {
+                              setMembers((ms) =>
+                                ms.filter((x) => x.id !== m.id),
+                              );
+                              setToast("Member deleted.");
+                            }
+                          }}
+                          className="rounded-lg p-2  text-slate-500 hover:bg-red-50 hover:text-red-700"
+                        >
+                          <Trash2 className="size-4 " />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

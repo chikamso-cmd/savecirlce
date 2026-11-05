@@ -112,6 +112,7 @@ export default function ProfilePage() {
   const [submitting, setSubmitting] = useState(false);
   const [checking, setChecking] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<string | null>(() => localStorage.getItem("savecircle:profile-photo"));
 
   useEffect(() => {
     document.title = "Profile | SaveCircle";
@@ -367,6 +368,13 @@ export default function ProfilePage() {
           </Card>
 
           <Card title="Your details" desc="How your team and SaveCircle reach you.">
+            <div className="flex items-center gap-4">
+              {photo ? <img src={photo} alt="Profile" className="size-16 rounded-full object-cover" /> : <span className="flex size-16 items-center justify-center rounded-full bg-emerald-100 text-xl font-extrabold text-emerald-800">{initials(user?.fullName ?? "Save Circle")}</span>}
+              <label className="min-h-11 cursor-pointer rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold hover:border-emerald-600">
+                Upload profile photo
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { const value = String(reader.result); setPhoto(value); localStorage.setItem("savecircle:profile-photo", value); setToast("Profile photo updated."); }; reader.readAsDataURL(file); }} />
+              </label>
+            </div>
             <Field label="Full name">
               <input
                 className={inputCls}

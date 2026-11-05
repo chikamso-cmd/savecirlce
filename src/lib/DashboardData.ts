@@ -11,6 +11,7 @@ import {
   UsersRound,
   Wallet,
   Banknote,
+  Landmark,
   type LucideIcon,
 } from "lucide-react";
 
@@ -47,6 +48,7 @@ export const NAV: NavSection[] = [
         badge: 2,
       },
       { href: "/cash", label: "Cash in hand", icon: Wallet },
+      // { href: "/loans", label: "Loans", icon: Landmark },
       {
         href: "/reconciliation",
         label: "Reconciliation",
@@ -66,7 +68,7 @@ export const NAV: NavSection[] = [
 ];
 
 export const organisation = {
-  name: "[Organisation name]",
+  name: "Organisation name",
   type: "Cooperative",
   role: "Admin",
   branches: ["[Branch A]", "[Branch B]"],

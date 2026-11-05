@@ -231,6 +231,22 @@ export async function recordDeposit(
 }
 
 // TODO: POST /cash-in-hand/:officerId/remind (SMS/WhatsApp)
+export async function recordCashPayment(officerName: string, member: string, group: string, amount: number) {
+  await wait(700);
+  const officer = OFFICERS.find((o) => o.name === officerName);
+  if (!officer) throw new Error("Treasurer not found.");
+  const entry: CashEntry = {
+    id: `c${Date.now()}`,
+    member,
+    group,
+    amount,
+    remaining: amount,
+    loggedAt: new Date().toISOString(),
+  };
+  OFFICERS = OFFICERS.map((o) => o.id === officer.id ? { ...o, entries: [entry, ...o.entries] } : o);
+  return clone(entry);
+}
+
 export async function sendReminder(o: Officer) {
   await wait(600);
   const next = { ...o, lastReminderAt: new Date().toISOString() };

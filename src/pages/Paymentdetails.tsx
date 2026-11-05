@@ -239,6 +239,15 @@ export default function PaymentDetailsPage() {
               >
                 Mark for refund
               </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setToast("Payment issue escalated to the admin team.")
+                }
+                className={btnOutline}
+              >
+                <AlertCircle className="size-4" /> Escalate missing payment
+              </button>
             </div>
           )}
         </section>
@@ -515,14 +524,42 @@ export default function PaymentDetailsPage() {
           </section>
 
           {p.member && p.status !== "reversed" && (
-            <section className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-              <div className="min-w-0 flex-1">
-                <h2 className="font-bold">Receipt</h2>
-                <p className="text-sm text-slate-500">
-                  {p.receiptSentAt
-                    ? `Sent ${fmtDateTime(p.receiptSentAt)}`
-                    : "Not sent yet"}
+            <section className="relative flex flex-wrap items-center gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-6xl font-extrabold tracking-widest text-emerald-900/[0.035] -rotate-12">
+                SAVECIRCLE
+              </div>
+              <div className="relative min-w-0 flex-1">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-10 items-center justify-center rounded-full bg-emerald-700 text-sm font-black text-white">
+                    SC
+                  </span>
+                  <h2 className="font-bold">SaveCircle payment receipt</h2>
+                </div>
+                <p className="mt-2 mb-2 text-2xl font-extrabold text-emerald-800">
+                  {naira(p.amount)}
                 </p>
+                <div className="space-y-2.5">
+                  <p className="text-sm text-slate-500">
+                    Paid by: {p.member} · {fmtDateTime(p.receivedAt)}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {p.memberPhone && `Sender_phone: ${p.memberPhone}`}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {p.channel && `Channel: ${p.channel}`}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {p.narration && `Narration:  ${p.narration}`}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {p.accountNumber && `Paid into:  ${p.accountNumber}`}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {p.receiptSentAt
+                      ? `Sent: ${fmtDateTime(p.receiptSentAt)}`
+                      : "Not sent yet"}
+                  </p>
+                </div>
               </div>
               <button
                 type="button"

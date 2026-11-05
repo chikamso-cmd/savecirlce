@@ -39,6 +39,7 @@ export default function Sidebar({
     type: ORG_TYPES.find((t) => t.value === org?.type)?.title ?? sampleOrg.type,
   };
   const { collectionAccount } = organisation;
+  const loanOrganisation = org?.type === "cooperative" || org?.type === "business";
 
   // On mobile the drawer always shows labels
   const compact = collapsed && !mobileOpen;
@@ -125,7 +126,7 @@ export default function Sidebar({
                 <div className="mx-auto mb-2 h-px w-8 bg-emerald-800" />
               )}
               <ul className="space-y-0.5">
-                {section.items.map(({ href, label, icon: Icon, badge }) => {
+                {section.items.filter(({ href }) => href !== "/loans" || loanOrganisation).map(({ href, label, icon: Icon, badge }) => {
                   const active =
                     pathname === href || pathname.startsWith(`${href}/`);
                   return (

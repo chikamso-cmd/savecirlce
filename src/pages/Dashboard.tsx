@@ -12,6 +12,7 @@ import {
   StatCards,
   WithdrawalsDue,
 } from "../components/widgets/DashboardWidgets";
+import { organisation } from "../lib/DashboardData";
 
 // Onboarding only asks for name and type, so nudge the owner to finish the rest
 function FinishSetup() {
@@ -92,7 +93,7 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-            Good morning, [Name]
+            Good morning, {organisation.name}
           </h1>
           <p className="mt-1 text-sm text-slate-600 sm:text-base">
             Here's what's happening across your groups today.
