@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Circle, Plus } from "lucide-react";
 import ExportButton from "../components/widgets/ExportButton";
 import { useOrganisation } from "../lib/OrgStore";
-import { moneyModeFor } from "../types/types";
+import { moneyModeFor, ORG_TYPES } from "../types/types";
+import { organisation as sampleOrg } from "../lib/DashboardData";
 import {
   CashInHand,
   CollectionsChart,
@@ -88,6 +89,20 @@ export default function DashboardPage() {
     document.title = "Dashboard | SaveCircle";
   }, []);
 
+  const { organisation: org } = useOrganisation();
+  // const organisation = {
+  //   ...sampleOrg,
+  //   name: org?.name ?? sampleOrg.name,
+  //   type: ORG_TYPES.find((t) => t.value === org?.type)?.title ?? sampleOrg.type,
+  // };
+  // const orgDiff = {
+  //   if (org?.type === "business" || org?.type === "cooperative") {
+  //     return <FinishSetup />;
+  //   } else if (org?.type === "informal") {
+  //     return;
+  //   }
+  // };
+
   return (
     <div className="mx-auto max-w-8xl space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -109,7 +124,7 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
-
+{/* <div>{orgDiff}</div> */}
       <FinishSetup />
 
       <StatCards />
