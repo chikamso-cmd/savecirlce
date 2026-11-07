@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2, Circle, Plus } from "lucide-react";
 import ExportButton from "../components/widgets/ExportButton";
 import { useOrganisation } from "../lib/OrgStore";
 import { moneyModeFor, ORG_TYPES } from "../types/types";
-import { organisation as sampleOrg } from "../lib/DashboardData";
+// import { organisation as sampleOrg } from "../lib/DashboardData";
 import {
   CashInHand,
   CollectionsChart,
@@ -89,7 +89,7 @@ export default function DashboardPage() {
     document.title = "Dashboard | SaveCircle";
   }, []);
 
-  const { organisation: org } = useOrganisation();
+  // const { organisation: org } = useOrganisation();
   // const organisation = {
   //   ...sampleOrg,
   //   name: org?.name ?? sampleOrg.name,
@@ -124,7 +124,7 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
-{/* <div>{orgDiff}</div> */}
+      {/* <div>{orgDiff}</div> */}
       <FinishSetup />
 
       <StatCards />
